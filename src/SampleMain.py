@@ -9,7 +9,7 @@ from MainFacilitator import *
 
 mainFacilitator = MainFacilitator()
 
-question = "What is the meaning of life?"
+question = "capital of China"
 answer = mainFacilitator.AnswerQuestion(question)
 
 print("Q: {0}".format(question))

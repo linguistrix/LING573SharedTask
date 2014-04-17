@@ -23,6 +23,7 @@ class Session(object):
         self.relevantDocuments = None
         self.relevantPassages = None
         self.answers = None
+        self.maxNumberOfReturnedDocuments = 10
         self.logs = []
 
     def GetLogs(self):
