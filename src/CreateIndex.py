@@ -4,7 +4,7 @@
 # CreateIndex.py
 # Generates Whoosh index of the given data files
 
-import os, os.path
+import os, os.path, sys, time
 from bs4 import BeautifulSoup
 from whoosh import index
 from whoosh.fields import Schema, TEXT, ID, DATETIME
@@ -45,3 +45,16 @@ def addFileToIndex(ix, filepath):
 def doc2index(docpath, indexpath):
     ix = generateIndex(generateSchema(), indexpath)
     addFolderToIndex(ix, docpath)
+
+if __name__ == '__main__':
+    if len(sys.argv) < 2:
+        print('Usage: ./CreateIndex.py <docpath> <indexpath>')
+        sys.exit(0)
+
+    start_time = time.time()
+    docpath = sys.argv[1]
+    indexpath = sys.argv[2]
+    print('Creating index at {0} using documents in {1}'.format(indexpath, docpath))
+    doc2index(docpath, indexpath)
+    end_time = time.time()
+    print('Time taken: {0}'.format(end_time - start_time))
