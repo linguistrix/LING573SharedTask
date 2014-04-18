@@ -18,7 +18,11 @@ class TaskExecutor(object):
 
 
 class Session(object):
-    def __init__(self, question):
+    def __init__(
+            self,
+            question):
+        
+        self.indexPath = "/home2/abothale/ling573/LING573SharedTask/src/index"
         self.questionProcessor = QuestionProcessor(question) 
         self.relevantDocuments = None
         self.relevantPassages = None
