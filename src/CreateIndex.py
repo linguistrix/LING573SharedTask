@@ -17,14 +17,16 @@ def generateIndex(schema, folderpath):
     if not os.path.exists(folderpath):
         os.mkdir(folderpath)
         ix = index.create_in(folderpath, schema)
+        print ('Index folder not found. Creating new index.')
     else:
+        print ('Index folder found. Updating index.')
         ix = index.open_dir(folderpath)
 
     return ix
 
 def addFolderToIndex(ix, folderpath):
     count = 0
-    print folderpath
+
     for root, _, files in os.walk(folderpath):
         for f in files:
             fullpath = os.path.join(root, f)
