@@ -22,7 +22,6 @@ class MainFacilitator(object):
         self.taskExecutors.append(PassageRetrievalTaskExecutor())
         self.taskExecutors.append(AnswerProcessingTaskExecutor())
 
-
     def AnswerQuestion(self, question):
         session = Session(question)
         

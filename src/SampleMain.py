@@ -9,7 +9,7 @@ from MainFacilitator import *
 
 mainFacilitator = MainFacilitator()
 
-question = "capital of China"
+question = "When did Idaho become a state?"
 answer = mainFacilitator.AnswerQuestion(question)
 
 print("Q: {0}".format(question))

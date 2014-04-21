@@ -18,8 +18,9 @@ class PassageRetrievalTaskExecutor(TaskExecutor):
         TaskExecutor.__init__(self, "PassageRetrievalTaskExecutor")
 
     def Execute(self, session):
+        '''
         frags = []
-        corpusPath = session.coupusPath
+        corpusPath = session.corpusPath
         qobj = session.queryObject
 
         for result in results:
@@ -30,6 +31,8 @@ class PassageRetrievalTaskExecutor(TaskExecutor):
         frags.sort(key=scorer).reverse()
 
         session.relevantPassages = [formatter(frag) for frag in frags]
+        frags = []
+        '''
         self.LogTaskCompletion(session)
         return True
 

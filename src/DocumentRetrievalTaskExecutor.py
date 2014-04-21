@@ -19,14 +19,12 @@ import os, os.path, sys, time
 class DocumentRetrievalTaskExecutor(TaskExecutor):
     def __init__(self):
         TaskExecutor.__init__(self, "DocumentRetrievalTaskExecutor")
-        #self.indexPath = "/home2/abothale/ling573/LING573SharedTask/src/index"
-        self.indexPath = "/home2/abothale/ling573/LING573SharedTask/src/index"
 
     def Execute(self, session):
-        query = " ".join(session.questionProcessor.GetWordSet()) 
+        query = session.questionProcessor.GetDocumentRetrievalQuery()
         
         session.query, session.relevantDocuments = self.__queryIndex(
-            self.indexPath,
+            session.indexPath,
             query, 
             N=session.maxNumberOfReturnedDocuments)
         
@@ -44,12 +42,17 @@ class DocumentRetrievalTaskExecutor(TaskExecutor):
         return ix
 
     def __queryIndex(self, indexpath, query_term, N=20):
-        ix = self.getIndex(indexpath)
-
+        relevantDocuments = []
+        
+        ix = self.__getIndex(indexpath)
+        
         with ix.searcher() as searcher:
             qp = QueryParser('body', schema=ix.schema)
             q = qp.parse(query_term)
             results = searcher.search(q, limit=N, terms=True)
+            
+            for result in results:
+                relevantDocuments.append((result['docno'], result['headline']))
 
-        return q, results
+        return q, relevantDocuments 
 
