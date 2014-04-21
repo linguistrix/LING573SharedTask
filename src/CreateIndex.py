@@ -17,16 +17,20 @@ def generateIndex(schema, folderpath):
     if not os.path.exists(folderpath):
         os.mkdir(folderpath)
         ix = index.create_in(folderpath, schema)
+    else:
+        ix = index.open_dir(folderpath)
 
     return ix
 
 def addFolderToIndex(ix, folderpath):
     count = 0
+    print folderpath
     for root, _, files in os.walk(folderpath):
         for f in files:
             fullpath = os.path.join(root, f)
             addFileToIndex(ix, fullpath)
             count += 1
+            print count
 
     print('Added {0} files to the Index'.format(count))
 
@@ -38,8 +42,12 @@ def addFileToIndex(ix, filepath):
     with ix.writer() as writer:
         for doc in soup.find_all('DOC'):
             doc_no = doc.DOCNO.string.strip()
-            headline = doc.HEADLINE.string.strip()
+            if doc.HEADLINE is not None:
+                headline = doc.HEADLINE.string.strip()
+            else:
+                headline = ''
             body = doc.TEXT.get_text().strip()
+
             writer.add_document(docno=doc_no, headline=headline, body=body)
 
 def doc2index(docpath, indexpath):
