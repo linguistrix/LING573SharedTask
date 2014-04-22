@@ -29,6 +29,7 @@ class Session(object):
         self.answers = None
         self.maxNumberOfReturnedDocuments = 10
         self.logs = []
+        self.logs.append("Question: {0}".format(question))
 
     def GetLogs(self):
         return "\n".join(self.logs) 

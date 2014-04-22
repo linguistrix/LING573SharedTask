@@ -22,6 +22,7 @@ class DocumentRetrievalTaskExecutor(TaskExecutor):
 
     def Execute(self, session):
         query = session.questionProcessor.GetDocumentRetrievalQuery()
+        session.logs.append("Query: {0}".format(query))
         
         session.query, session.relevantDocuments = self.__queryIndex(
             session.indexPath,

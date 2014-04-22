@@ -7,6 +7,7 @@
 from nltk import word_tokenize
 from sets import Set
 
+
 class QuestionProcessor(object):
     def __init__(self, question):
         self.question = question

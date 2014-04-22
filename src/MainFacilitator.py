@@ -32,7 +32,7 @@ class MainFacilitator(object):
 
         print(session.GetLogs())
         
-        return session.answers
+        return session
 
 
 

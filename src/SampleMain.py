@@ -10,7 +10,7 @@ from MainFacilitator import *
 mainFacilitator = MainFacilitator()
 
 question = "When did Idaho become a state?"
-answer = mainFacilitator.AnswerQuestion(question)
+answer = mainFacilitator.AnswerQuestion(question).answers
 
 print("Q: {0}".format(question))
 print("A: {0}".format(answer))
