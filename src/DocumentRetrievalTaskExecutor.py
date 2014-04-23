@@ -55,5 +55,5 @@ class DocumentRetrievalTaskExecutor(TaskExecutor):
             for result in results:
                 relevantDocuments.append((result['docno'], result['headline']))
 
-        return q, relevantDocuments 
+        return q, results#relevantDocuments 
 

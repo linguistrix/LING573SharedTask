@@ -18,21 +18,21 @@ class PassageRetrievalTaskExecutor(TaskExecutor):
         TaskExecutor.__init__(self, "PassageRetrievalTaskExecutor")
 
     def Execute(self, session):
-        '''
         frags = []
         corpusPath = session.corpusPath
-        qobj = session.queryObject
+        q = session.query
+        results = session.relevantDocuments
 
         for result in results:
             doc = Document()
             doc.loadDocumentFromID(result['docno'], corpusPath)
             body = doc.body
-            frags.extend(fragmenter.fragment_matches(body, qobj.all_tokens()))
-        frags.sort(key=scorer).reverse()
+            frags.extend(fragmenter.fragment_matches(body, q.all_tokens()))
+        frags.sort(key=scorer)
+        frags.reverse()
 
         session.relevantPassages = [formatter(frag) for frag in frags]
         frags = []
-        '''
         self.LogTaskCompletion(session)
         return True
 

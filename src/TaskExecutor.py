@@ -23,6 +23,7 @@ class Session(object):
             question):
         
         self.indexPath = "/home2/abothale/ling573/LING573SharedTask/src/index"
+        self.corpusPath = "/corpora/LDC/LDC02T31"
         self.questionProcessor = QuestionProcessor(question) 
         self.relevantDocuments = None
         self.relevantPassages = None
