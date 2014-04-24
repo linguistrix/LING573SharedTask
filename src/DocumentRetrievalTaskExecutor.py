@@ -24,13 +24,16 @@ class DocumentRetrievalTaskExecutor(TaskExecutor):
         query = session.questionProcessor.GetDocumentRetrievalQuery()
         session.logs.append("Query: {0}".format(query))
         
-        session.query, session.relevantDocuments = self.__queryIndex(
+        whooshQuery, results = self.__queryIndex(
             session.indexPath,
             query, 
             N=session.maxNumberOfReturnedDocuments)
-        
-        for relevantDoc in session.relevantDocuments:
-            session.logs.append("{0} - {1}".format(relevantDoc[0], relevantDoc[1]))
+
+        session.query = whooshQuery
+        session.relevantDocuments = results
+
+        for result in results:
+            session.logs.append("{0} - {1}".format(result[0], result[1]))
         
         self.LogTaskCompletion(session)
         return True
@@ -55,5 +58,5 @@ class DocumentRetrievalTaskExecutor(TaskExecutor):
             for result in results:
                 relevantDocuments.append((result['docno'], result['headline']))
 
-        return q, results#relevantDocuments 
+        return q, relevantDocuments 
 

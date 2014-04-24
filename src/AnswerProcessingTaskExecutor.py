@@ -12,7 +12,7 @@ class AnswerProcessingTaskExecutor(TaskExecutor):
         TaskExecutor.__init__(self, "AnswerProcessingTaskExecutor")
     
     def Execute(self, session):
-        session.answers = ["42"]
+        session.answers = session.relevantPassages[:3]
         self.LogTaskCompletion(session)
         return True
 

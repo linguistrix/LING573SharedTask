@@ -6,12 +6,14 @@
 
 from TaskExecutor import *
 from NewsDocument import *
+import whoosh.analysis
 import whoosh.highlight
 
 MAX_CHAR_NUM = 250
 fragmenter = whoosh.highlight.ContextFragmenter(maxchars=MAX_CHAR_NUM)
 scorer = whoosh.highlight.BasicFragmentScorer()
 formatter = whoosh.highlight.NullFormatter()
+analyzer = whoosh.analysis.SimpleAnalyzer()
 
 class PassageRetrievalTaskExecutor(TaskExecutor):
     def __init__(self):
@@ -23,18 +25,23 @@ class PassageRetrievalTaskExecutor(TaskExecutor):
         q = session.query
         results = session.relevantDocuments
 
+        qwords = frozenset(term[1] for term in q.all_terms())
+
         for result in results:
-            id = result['docno']
+            id = result[0]
 
             doc = Document()
             doc.loadDocumentFromID(id, corpusPath)
             body = doc.body
 
-            triples.extend( (scorer(f), f, id) for f in fragmenter.fragment_matches(body, q.all_tokens()) )
+            tokens = analyzer(body, positions=True, chars=True, removestops=False)
+            tokens = whoosh.highlight.set_matched_filter(tokens, qwords)
+
+            triples.extend( (scorer(f), f, id) for f in fragmenter.fragment_tokens(body, tokens) )
         triples.sort()
         triples.reverse()
 
-        session.relevantPassages = [ (formatter(triple[1]), triple[2]) for triple in triples]
+        session.relevantPassages = [ (formatter.format_fragment(triple[1]), triple[2]) for triple in triples]
         triples = []
         self.LogTaskCompletion(session)
         return True
