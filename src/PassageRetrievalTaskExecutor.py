@@ -6,6 +6,7 @@
 
 from TaskExecutor import *
 from NewsDocument import *
+import re
 import whoosh.analysis
 import whoosh.highlight
 
@@ -41,9 +42,16 @@ class PassageRetrievalTaskExecutor(TaskExecutor):
         triples.sort()
         triples.reverse()
 
-        session.relevantPassages = [ (formatter.format_fragment(triple[1]), triple[2]) for triple in triples]
+        #session.relevantPassages = [ (formatter.format_fragment(triple[1]), triple[2]) for triple in triples]
+        relevantPassages = []
+        for triple in triples:
+          passage = formatter.format_fragment(triple[1])
+          relevantPassages.append( (removeNewline(passage), triple[2]) )
+        session.relevantPassages = relevantPassages
+
         triples = []
         self.LogTaskCompletion(session)
         return True
 
-
+def removeNewline(s):
+  return re.sub(r'\s+', ' ', s.strip())
