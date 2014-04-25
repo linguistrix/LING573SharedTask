@@ -32,11 +32,19 @@ class Document:
             if cur_doc_no != docid:
                 continue
 
-            headline = doc.HEADLINE.string.strip()
-            body = doc.TEXT.get_text().strip()
+            if (doc.HEADLINE != None):
+                headline = doc.HEADLINE.string.strip()
+            else:
+                headline = ""
+            if (doc.TEXT != None):
+                body = doc.TEXT.get_text().strip()
+            else:
+                body = ""
+            
             self.body = body
             self.docid = cur_doc_no
             self.headline = headline
+           
             return True
 
         return False

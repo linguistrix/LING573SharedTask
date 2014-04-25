@@ -10,14 +10,14 @@ import whoosh.analysis
 import whoosh.highlight
 
 MAX_CHAR_NUM = 250
-fragmenter = whoosh.highlight.ContextFragmenter(maxchars=MAX_CHAR_NUM)
-scorer = whoosh.highlight.BasicFragmentScorer()
-formatter = whoosh.highlight.NullFormatter()
-analyzer = whoosh.analysis.SimpleAnalyzer()
 
 class PassageRetrievalTaskExecutor(TaskExecutor):
     def __init__(self):
         TaskExecutor.__init__(self, "PassageRetrievalTaskExecutor")
+        self.fragmenter = whoosh.highlight.ContextFragmenter(maxchars=MAX_CHAR_NUM)
+        self.scorer = whoosh.highlight.BasicFragmentScorer()
+        self.formatter = whoosh.highlight.NullFormatter()
+        self.analyzer = whoosh.analysis.SimpleAnalyzer()
 
     def Execute(self, session):
         triples = [] #list of (score, fragment, docid) triples
@@ -34,15 +34,15 @@ class PassageRetrievalTaskExecutor(TaskExecutor):
             doc.loadDocumentFromID(id, corpusPath)
             body = doc.body
 
-            tokens = analyzer(body, positions=True, chars=True, removestops=False)
+            tokens = self.analyzer(body, positions=True, chars=True, removestops=False)
             tokens = whoosh.highlight.set_matched_filter(tokens, qwords)
 
-            triples.extend( (scorer(f), f, id) for f in fragmenter.fragment_tokens(body, tokens) )
-        triples.sort()
-        triples.reverse()
+            triples.extend( (self.scorer(f), f, id) for f in self.fragmenter.fragment_tokens(body, tokens) )
+        
+        triples.sort(reverse=True)
 
-        session.relevantPassages = [ (formatter.format_fragment(triple[1]), triple[2]) for triple in triples]
-        triples = []
+        session.relevantPassages = [ (self.formatter.format_fragment(triple[1]), triple[2]) for triple in triples]
+        
         self.LogTaskCompletion(session)
         return True
 

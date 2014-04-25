@@ -12,7 +12,12 @@ class AnswerProcessingTaskExecutor(TaskExecutor):
         TaskExecutor.__init__(self, "AnswerProcessingTaskExecutor")
     
     def Execute(self, session):
-        session.answers = session.relevantPassages[:3]
+        session.answers = []
+        for passage, docId in session.relevantPassages[:3]:
+            passage = passage.replace("\n", " ")
+            session.answers.append((passage, docId))
+            session.logs.append("Answer: {0} | {1}".format(passage, docId))
+        
         self.LogTaskCompletion(session)
         return True
 

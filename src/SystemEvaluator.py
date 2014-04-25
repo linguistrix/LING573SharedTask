@@ -33,12 +33,13 @@ def GetAllQuestions(questionsFilename):
     return questions
 
 
-if (len(sys.argv) < 3):
-    print("Usage: ./SystemEvaluator.py question_file result_file")
+if (len(sys.argv) < 4):
+    print("Usage: ./SystemEvaluator.py run_tag question_file result_file")
+    sys.exit(1)
 
-questionsFilename = sys.argv[1]
-resultFilename = sys.argv[2]
-runTag = "foo"
+runTag = sys.argv[1]
+questionsFilename = sys.argv[2]
+resultFilename = sys.argv[3]
 
 questions = GetAllQuestions(questionsFilename)
 
@@ -50,14 +51,14 @@ for question in questions:
         continue
 
     session = mainFacilitator.AnswerQuestion(question.text)
-    if (len(session.relevantDocuments) == 0000):
+    if (len(session.answers) == 0):
         output += "{0} {1} NIL\n".format(question.id, runTag)
     else:
         output += "{0} {1} {2} {3}\n".format(
             question.id,
             runTag,
-            session.relevantDocuments[0][0],
-            session.answers[0])
+            session.answers[0][1],
+            session.answers[0][0])
    
 resultFile = open(resultFilename, "w")
 resultFile.write(output)
