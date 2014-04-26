@@ -52,7 +52,7 @@ for question in questions:
 
     session = mainFacilitator.AnswerQuestion(question.text)
     if (len(session.answers) == 0):
-        output += "{0} {1} NIL\n".format(question.id, runTag)
+        output += "{0} {1} NIL NIL\n".format(question.id, runTag)
     else:
         output += "{0} {1} {2} {3}\n".format(
             question.id,
