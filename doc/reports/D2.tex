@@ -1,0 +1,93 @@
+%
+% File acl2014.tex
+%
+% Contact: koller@ling.uni-potsdam.de, yusuke@nii.ac.jp
+%%
+%% Based on the style files for ACL-2013, which were, in turn,
+%% Based on the style files for ACL-2012, which were, in turn,
+%% based on the style files for ACL-2011, which were, in turn, 
+%% based on the style files for ACL-2010, which were, in turn, 
+%% based on the style files for ACL-IJCNLP-2009, which were, in turn,
+%% based on the style files for EACL-2009 and IJCNLP-2008...
+
+%% Based on the style files for EACL 2006 by 
+%%e.agirre@ehu.es or Sergi.Balari@uab.es
+%% and that of ACL 08 by Joakim Nivre and Noah Smith
+
+\documentclass[11pt]{article}
+\usepackage{acl2014}
+\usepackage{times}
+\usepackage{url}
+\usepackage{latexsym}
+\usepackage[backend=bibtex]{biblatex}
+\addbibresource{citations}
+
+
+%\setlength\titlebox{5cm}
+
+% You can expand the titlebox if you need extra space
+% to show all the authors. Please do not make the titlebox
+% smaller than 5cm (the original size); we will check this
+% in the camera-ready version and ask you to change it back.
+
+
+\title{Report Skeleton : Deliverable 1}
+
+\author{Antariksh Bothale \\
+  {\tt abothale@uw.edu} \\\And
+  Julian Chan\\
+  {\tt jchan3@uw.edu} \\\And
+  Yi-shu Wei\\
+  {\tt yishuwei@uw.edu}}
+
+\date{}
+
+\begin{document}
+\maketitle
+\begin{abstract}
+This document reports the creation and performance of an end-to-end Question Answering system. We have a basic setup in place for the overall task and present current baseline results.
+\end{abstract}
+
+\section{Introduction}
+
+
+
+
+\section{System Overview}
+
+The overall QA system has been split into various subsystems, each devoted to one particular subproblem. The four main units are the Question Processing Unit, Document Retrieval Unit, Passage Retrieval Unit and the Answer Processing Unit. These are all run together by a main Facilitator Unit.
+
+
+
+
+\section{Approach}
+\subsection{Document Retrieval}
+The Document Retrieval Subsystem takes a document retrieval query from the session and populates the session with a list of hits from the indexing and retrieval system, as described below. This list of documents is then used for Passage Retrieval and Answer Processing.
+
+For the purpose of indexing and searching the documents, we use Whoosh\cite{whoosh}, which is pure-Python based text indexing, search, and spell checking library. The choice of a Python based library above alternatives such as Lucene and Indri/Lemur was motivated by its ease of integration and use with our Python code-base, and its functionality being comparable to that of its Java counterparts. 
+
+\subsubsection{Indexing}
+The Beautiful Soup XML parser\cite{bsoup} was used to parse all the documents and extract the Document ID, Headline and Body Text. Whoosh's in-built indexing engine was used to index all the documents present in the corpus. The current system uses Whoosh's default indexing mechanism, which does not process the text, we plan to improve on this by incorporating tokenization and stemming. The indexing schema was designed to store the Document ID and Headline with the Index, while the Body Text was indexed but not stored as it would have caused unnecessary duplication of data. Instead, the text is retrieved from the document using the Document ID whenever needed. This index is currently stored on Patas.
+
+\section{Results}
+
+Under the baseline system, we obtain an aggregate score of 0.0466 under the Strict evaluation scheme, and an aggregate score of 0.0595 under the Lenient evaluation scheme.
+
+\section{Discussion}
+\label{sec:discussion}
+
+Long papers may consist of up to 9 pages of content, plus two extra
+pages for references. Short papers may consist of up to 5 pages of
+content, plus two extra pages for references.  Papers that do not
+conform to the specified length and formatting requirements may be
+rejected without review.
+
+\section*{Acknowledgments}
+
+The acknowledgments should go immediately before the references.  Do
+not number the acknowledgments section. Do not include this section
+when submitting your paper for review.
+
+\printbibliography 
+
+\end{document}
