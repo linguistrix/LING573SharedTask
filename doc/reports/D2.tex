@@ -76,24 +76,20 @@ For the purpose of indexing and searching the documents, we use Whoosh\cite{whoo
 \subsubsection{Indexing}
 The Beautiful Soup XML parser\cite{bsoup} was used to parse all the documents and extract the Document ID, Headline and Body Text. Whoosh's in-built indexing engine was used to index all the documents present in the corpus. The current system uses Whoosh's default indexing mechanism, which does not process the text, we plan to improve on this by incorporating tokenization and stemming. The indexing schema was designed to store the Document ID and Headline with the Index, while the Body Text was indexed but not stored as it would have caused unnecessary duplication of data. Instead, the text is retrieved from the document using the Document ID whenever needed. This index is currently stored on Patas.
 
-\section{Results}
+\subsection{Passage Retrieval}
+As a first-level approximation, the passage retrieval module uses Whoosh's in-built analyzer and fragmenter to obtain a list of relevant document fragments that mention the query text. Whoosh also has an scoring system for rating the fragments for relevance. This score is used as is by us and the top passages according to this score are chosen.
 
+\subsection{Answer Processing}
+Since the focus of the current deliverable was to get the end-to-end system running, no specific answer processing techniques were employed. Instead, we returned the top sentence fragment as returned by the Passage Retrieval system. 
+\section{Results}
 Under the baseline system, we obtain an aggregate score of 0.0466 under the Strict evaluation scheme, and an aggregate score of 0.0595 under the Lenient evaluation scheme.
 
 \section{Discussion}
 \label{sec:discussion}
 
-Long papers may consist of up to 9 pages of content, plus two extra
-pages for references. Short papers may consist of up to 5 pages of
-content, plus two extra pages for references.  Papers that do not
-conform to the specified length and formatting requirements may be
-rejected without review.
-
+The baseline system has been put in place and works end to end, but since it uses fairly naive and rudimentary processing methods at each step of the chain, the results are far from satisfactory. The next few weeks on the project would now be devoted to improving each of the segments. 
 \section*{Acknowledgments}
 
-The acknowledgments should go immediately before the references.  Do
-not number the acknowledgments section. Do not include this section
-when submitting your paper for review.
 
 \printbibliography 
 
