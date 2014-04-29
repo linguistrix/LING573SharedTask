@@ -76,9 +76,15 @@ For the purpose of indexing and searching the documents, we use Whoosh\cite{whoo
 \subsubsection{Indexing}
 The Beautiful Soup XML parser\cite{bsoup} was used to parse all the documents and extract the Document ID, Headline and Body Text. Whoosh's in-built indexing engine was used to index all the documents present in the corpus. The current system uses Whoosh's default indexing mechanism, which does not process the text, we plan to improve on this by incorporating tokenization and stemming. The indexing schema was designed to store the Document ID and Headline with the Index, while the Body Text was indexed but not stored as it would have caused unnecessary duplication of data. Instead, the text is retrieved from the document using the Document ID whenever needed. This index is currently stored on Patas.
 
+\subsection{Passage Retrival and Answer Extration}
+In this deliverable we combine passage retrieval and answer extraction into one step. This step reads the files reported as relevant by the document retrieval module, extracting all passages in the documents that contain the keywords (the words in the question). A ``passage'' in our current system is simply defined as any chunk within the document with no more than 250 characters. These passages are than scored based on the density of keywords in the passage. The passage extraction and scoring function are taken from Whoosh, which are originally used for returning snippets for search results. The final answers of our current system are the top three passages.
+
+In the future version of our system, we would like to split out an separate answer extraction modeule so that it will generate short answers from the passages and score them based on whether they are valid answers to the question type and their relevance. We would also like to improve the passage retrieval part by implementing our own passage scoring function.
+
 \section{Results}
 
 Under the baseline system, we obtain an aggregate score of 0.0466 under the Strict evaluation scheme, and an aggregate score of 0.0595 under the Lenient evaluation scheme.
+One reason we got such low scores is that we did not notice there is an \texttt{text} attribute in the parent node of the questions (the \texttt{target} node) which contains the main subject of the questions. Our search was based on the question text only, and thus missed the most important information.
 
 \section{Discussion}
 \label{sec:discussion}
