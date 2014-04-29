@@ -20,6 +20,7 @@
 \usepackage{url}
 \usepackage{latexsym}
 \usepackage[backend=bibtex]{biblatex}
+\usepackage{graphicx}
 \addbibresource{citations}
 
 
@@ -31,7 +32,7 @@
 % in the camera-ready version and ask you to change it back.
 
 
-\title{Report Skeleton : Deliverable 1}
+\title{MIM QA System: Deliverable 2}
 
 \author{Antariksh Bothale \\
   {\tt abothale@uw.edu} \\\And
@@ -51,13 +52,19 @@ This document reports the creation and performance of an end-to-end Question Ans
 \section{Introduction}
 
 
-
-
 \section{System Overview}
 
-The overall QA system has been split into various subsystems, each devoted to one particular subproblem. The four main units are the Question Processing Unit, Document Retrieval Unit, Passage Retrieval Unit and the Answer Processing Unit. These are all run together by a main Facilitator Unit.
+Our system architecture can be broken down into three major classes - MainFacilitator, TaskExecutor, and Session. Our information retrieval system processes queries and retrieves answers in 3 steps, namely Document Retrieval, Passage Retrieval, and Answer Processing. Each of these steps are encapsulated in their own class and derives from the TaskExecutor task.  The Session object is used to pass information between these tasks. The implementation of each TaskExecutor is completely transparent to the MainFacilitator, whose job is to simply run the TaskExecutor(s) in the correct order and pass a Session object between them. The QuestionProcessor object is embedded in the Session object and contains methods that allows the TaskExecutor(s) to access the user query.
 
+During start-up, MainFacilitator instantiates the three TaskExecutor(s) and put them in an array. When there is a new query and the AnswerQuestion() method is called, MainFacilitator creates a new Session object and calls Execute() on each of the TaskExecutor(s) sequentially. Barring any execution error, the answer will be written to the Session object. 
 
+The SystemEvaluator reads in all the question from the data set and calls MainFacilitator's AnswerQuestion() function. It then reads the answer from the returned Session object and 
+writes to the output file.
+
+%\begin{figure*}
+\includegraphics[width=3in,height=1.75in]{MIM_class_diagram.png}
+Fig 1: class diagram of the MIM QA system
+%\end{figure*}
 
 
 \section{Approach}
