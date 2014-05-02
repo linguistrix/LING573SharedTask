@@ -25,7 +25,7 @@ class DocumentRetrievalTaskExecutor(TaskExecutor):
         session.logs.append("Query: {0}".format(query))
         
         whooshQuery, results = self.__queryIndex(
-            session.indexPath,
+            session.index,
             query, 
             N=session.maxNumberOfReturnedDocuments)
 
@@ -45,13 +45,13 @@ class DocumentRetrievalTaskExecutor(TaskExecutor):
             ix = None
         return ix
 
-    def __queryIndex(self, indexpath, query_term, N=20):
+    def __queryIndex(self, index, query_term, N=20):
         relevantDocuments = []
         
-        ix = self.__getIndex(indexpath)
+        #ix = self.__getIndex(indexpath)
         
-        with ix.searcher() as searcher:
-            qp = QueryParser('body', schema=ix.schema)
+        with index.searcher() as searcher:
+            qp = QueryParser('body', schema=index.schema)
             q = qp.parse(query_term)
             results = searcher.search(q, limit=N, terms=True)
             

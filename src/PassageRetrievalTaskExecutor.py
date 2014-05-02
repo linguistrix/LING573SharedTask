@@ -10,12 +10,12 @@ import re
 import whoosh.analysis
 import whoosh.highlight
 
-MAX_CHAR_NUM = 250
+MAX_CHAR_NUM = 500
 
 class PassageRetrievalTaskExecutor(TaskExecutor):
     def __init__(self):
         TaskExecutor.__init__(self, "PassageRetrievalTaskExecutor")
-        self.fragmenter = whoosh.highlight.ContextFragmenter(maxchars=MAX_CHAR_NUM)
+        self.fragmenter = whoosh.highlight.SentenceFragmenter(maxchars=MAX_CHAR_NUM)
         self.scorer = whoosh.highlight.BasicFragmentScorer()
         self.formatter = whoosh.highlight.NullFormatter()
         self.analyzer = whoosh.analysis.SimpleAnalyzer()
