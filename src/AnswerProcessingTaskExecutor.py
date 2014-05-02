@@ -13,7 +13,7 @@ class AnswerProcessingTaskExecutor(TaskExecutor):
     
     def Execute(self, session):
         session.answers = []
-        for passage, docId in session.relevantPassages[:3]:
+        for passage, docId in session.relevantPassages[:10]:
             passage = passage.replace("\n", " ")
             session.answers.append((passage, docId))
             session.logs.append("Answer: {0} | {1}".format(passage, docId))

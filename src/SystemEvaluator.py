@@ -49,19 +49,19 @@ questions = GetAllQuestions(questionsFilename)
 
 mainFacilitator = MainFacilitator()
 
-output = ""
-for question in questions:
-    session = mainFacilitator.AnswerQuestion(question)
-    if (len(session.answers) == 0):
-        output += "{0} {1} NIL NIL\n".format(question.id, runTag)
-    else:
-        for ans in session.answers:
-            output += "{0} {1} {2} {3}\n".format(
-                question.id,
-                runTag,
-                session.answers[0][1],
-                session.answers[0][0])
+with open(resultFilename, "w") as resultFile:
+    for question in questions:
+        session = mainFacilitator.AnswerQuestion(question)
 
-resultFile = open(resultFilename, "w")
-resultFile.write(output)
-resultFile.close()
+        if (len(session.answers) == 0):
+            resultFile.write("{0} {1} NIL NIL\n".format(
+              question.id,
+              runTag))
+        else:
+            for ans in session.answers:
+                resultFile.write("{0} {1} {2} {3}\n".format(
+                    question.id,
+                    runTag,
+                    ans[1],
+                    ans[0]))
+
