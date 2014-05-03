@@ -45,7 +45,7 @@ class MainFacilitator(object):
                 break
 
         print(session.GetLogs())
-        print
+        print("")
         
         return session
 

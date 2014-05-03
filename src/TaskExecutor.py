@@ -28,7 +28,7 @@ class Session(object):
         self.relevantDocuments = None
         self.relevantPassages = None
         self.answers = None
-        self.maxNumberOfReturnedDocuments = 10
+        self.maxNumberOfReturnedDocuments = 20
         self.logs = []
         self.logs.append("Question: {0}".format(question.text))
 
