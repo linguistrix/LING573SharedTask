@@ -9,7 +9,7 @@ from MainFacilitator import *
 
 mainFacilitator = MainFacilitator()
 
-question = "When did Idaho become a state?"
+question = Question("123", "FACTOID", "When did it become a state?", "Idaho")
 answer = mainFacilitator.AnswerQuestion(question).answers
 
 print("Q: {0}".format(question))

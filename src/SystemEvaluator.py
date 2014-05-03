@@ -5,15 +5,6 @@ import sys
 from bs4 import BeautifulSoup
 from MainFacilitator import *
 
-class Question(object):
-    def __init__(self, id, type, text, target):
-        self.id = id
-        self.type = type
-        self.text = text
-        self.target = target
-
-    def __str__(self):
-        return " | ".join([self.id, self.type, self.text, self.target])
 
 def GetAllQuestions(questionsFilename):
     questionsFile = open(questionsFilename, "r")

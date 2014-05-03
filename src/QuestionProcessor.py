@@ -4,19 +4,15 @@
 # QuestionProcessor.py
 # Provides various functions for querying a user question
 
-from nltk import word_tokenize
-from sets import Set
-
+from whoosh import qparser
+import re
 
 class QuestionProcessor(object):
-    def __init__(self, question):
-        self.question = question
+    def __init__(self, index):
+        self.index = index
 
-    def GetWordList(self):
-        return map(lambda x: x.lower(), word_tokenize(self.question))
-
-    def GetDocumentRetrievalQuery(self):
-        wordsToRemove = Set([
+    def GetDocumentRetrievalQuery(self, question):
+        wordsToRemove = set([
             "who",
             "what",
             "why",
@@ -29,12 +25,18 @@ class QuestionProcessor(object):
             "did",
             "does",
             "?"])
-       
-        wordList = self.GetWordList()
 
-        for i in reversed(range(0, len(wordList))):
-            if (wordList[i] in wordsToRemove):
-                wordList.pop(i)
+        wordList = [x for x in question.GetWordList() if x not in wordsToRemove]
 
-        return " ".join(wordList)
+        schema = self.index.schema
+        og = qparser.OrGroup.factory(0.9)
+
+        textParser = qparser.QueryParser("body", schema, group=og)
+        targetParser = qparser.QueryParser("body", schema)
+        headlineParser = qparser.QueryParser("headline", schema, group=og)
+
+        target = re.sub("[^\\.A-Za-z0-9]+", " ", question.target)
+        qtext = re.sub("[^\\.a-z0-9]+", " ", " ".join(wordList))
+
+        return textParser.parse(qtext) & (targetParser.parse(target) | headlineParser.parse(target))
 

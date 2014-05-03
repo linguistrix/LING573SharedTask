@@ -5,10 +5,24 @@
 # The entry point of the MIM QA system.
 # Initializes all components and facilitates the QA operations
 
+from nltk import word_tokenize
 from TaskExecutor import *
 from DocumentRetrievalTaskExecutor import *
 from PassageRetrievalTaskExecutor import *
 from AnswerProcessingTaskExecutor import *
+
+class Question(object):
+    def __init__(self, id, type, text, target):
+        self.id = id
+        self.type = type
+        self.text = text
+        self.target = target
+
+    def __str__(self):
+        return " | ".join([self.id, self.type, self.text, self.target])
+
+    def GetWordList(self):
+        return [x.lower() for x in word_tokenize(self.text)]
 
 
 class MainFacilitator(object):
@@ -31,6 +45,7 @@ class MainFacilitator(object):
                 break
 
         print(session.GetLogs())
+        print
         
         return session
 
