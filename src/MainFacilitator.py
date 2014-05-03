@@ -27,7 +27,6 @@ class Question(object):
 
 class MainFacilitator(object):
     def __init__(self):
-        self.taskExecutors = None 
         self.InitializeTaskExecutors()
 
     def InitializeTaskExecutors(self):
@@ -48,7 +47,3 @@ class MainFacilitator(object):
         print("")
         
         return session
-
-
-
-

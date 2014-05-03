@@ -8,10 +8,10 @@ from whoosh import qparser
 import re
 
 class QuestionProcessor(object):
-    def __init__(self, index):
-        self.index = index
+    def __init__(self):
+        pass
 
-    def GetDocumentRetrievalQuery(self, question):
+    def GetDocumentRetrievalQuery(self, question, schema):
         wordsToRemove = set([
             "who",
             "what",
@@ -28,7 +28,6 @@ class QuestionProcessor(object):
 
         wordList = [x for x in question.GetWordList() if x not in wordsToRemove]
 
-        schema = self.index.schema
         og = qparser.OrGroup.factory(0.9)
 
         textParser = qparser.QueryParser("body", schema, group=og)

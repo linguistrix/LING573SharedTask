@@ -3,7 +3,8 @@
 
 # TaskExecutor.py
 
-import QuestionProcessor, whoosh.index
+from QuestionProcessor import *
+import whoosh.index
 
 class TaskExecutor(object):
     def __init__(self, taskName):
@@ -24,7 +25,8 @@ class Session(object):
         self.index = whoosh.index.open_dir(self.indexPath)
 
         self.question = question
-        self.questionProcessor = QuestionProcessor.QuestionProcessor(self.index)
+        self.query = QuestionProcessor().GetDocumentRetrievalQuery(question, self.index.schema)
+
         self.relevantDocuments = None
         self.relevantPassages = None
         self.answers = None

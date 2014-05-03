@@ -8,8 +8,6 @@ from TaskExecutor import *
 from CreateIndex import *
 from NewsDocument import Document
 from whoosh import index
-from whoosh.fields import Schema, TEXT, ID, DATETIME
-from whoosh.searching import Hit
 import os, os.path, sys, time
 
 
@@ -19,7 +17,7 @@ class DocumentRetrievalTaskExecutor(TaskExecutor):
 
     def Execute(self, session):
         question = session.question
-        query = session.questionProcessor.GetDocumentRetrievalQuery(question)
+        query = session.query
         #session.logs.append("Query: {0}".format(query))
         
         results = self.__queryIndex(
