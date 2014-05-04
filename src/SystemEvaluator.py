@@ -27,32 +27,32 @@ def GetAllQuestions(questionsFilename):
 
     return questions
 
+if __name__ == '__main__':
+    if (len(sys.argv) < 4):
+        print("Usage: ./SystemEvaluator.py run_tag question_file result_file")
+        sys.exit(1)
 
-if (len(sys.argv) < 4):
-    print("Usage: ./SystemEvaluator.py run_tag question_file result_file")
-    sys.exit(1)
+    runTag = sys.argv[1]
+    questionsFilename = sys.argv[2]
+    resultFilename = sys.argv[3]
 
-runTag = sys.argv[1]
-questionsFilename = sys.argv[2]
-resultFilename = sys.argv[3]
+    questions = GetAllQuestions(questionsFilename)
 
-questions = GetAllQuestions(questionsFilename)
+    mainFacilitator = MainFacilitator()
 
-mainFacilitator = MainFacilitator()
+    with open(resultFilename, "w") as resultFile:
+        for question in questions:
+            session = mainFacilitator.AnswerQuestion(question)
 
-with open(resultFilename, "w") as resultFile:
-    for question in questions:
-        session = mainFacilitator.AnswerQuestion(question)
-
-        if (len(session.answers) == 0):
-            resultFile.write("{0} {1} NIL NIL\n".format(
-              question.id,
-              runTag))
-        else:
-            for ans in session.answers:
-                resultFile.write("{0} {1} {2} {3}\n".format(
-                    question.id,
-                    runTag,
-                    ans[1],
-                    ans[0]))
+            if (len(session.answers) == 0):
+                resultFile.write("{0} {1} NIL NIL\n".format(
+                  question.id,
+                  runTag))
+            else:
+                for ans in session.answers:
+                    resultFile.write("{0} {1} {2} {3}\n".format(
+                        question.id,
+                        runTag,
+                        ans[1],
+                        ans[0]))
 
