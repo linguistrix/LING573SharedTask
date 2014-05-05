@@ -11,7 +11,7 @@ class QuestionProcessor(object):
     def __init__(self, index):
         self.index = index
 
-    def GetDocumentRetrievalQuery(self, question):
+    def GetDocumentRetrievalQuery(self, question, schema):
         wordsToRemove = set([
             "who",
             "what",

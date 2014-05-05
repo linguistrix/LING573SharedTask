@@ -4,6 +4,7 @@
 import sys
 from bs4 import BeautifulSoup
 from MainFacilitator import *
+from QuestionClassifier import *
 
 
 def GetAllQuestions(questionsFilename):
@@ -24,7 +25,7 @@ def GetAllQuestions(questionsFilename):
 
             if question.type == 'FACTOID':
                 questions.append(question)
-
+	questions = ClassifyQuestions(questions)	
     return questions
 
 if __name__ == '__main__':

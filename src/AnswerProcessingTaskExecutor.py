@@ -16,7 +16,8 @@ class AnswerProcessingTaskExecutor(TaskExecutor):
         # Just trying out if putting an answer containing date / time for a WHEN query is sensible
         # and improves scoring. Crudely done. This is heavily hardcoded.
 
-        monthRegex = r'(\d{1-2}(th|st|rd|nd)?)? january|february|march|april|may|june|july|august|september|october|november|december *\d{1-2}?'
+        monthRegex = r'(january|february|march|april|may|june|july|august|september|october|november|december)'
+        yearRegex = r'\d{4}'
         daySet = set(['sunday','monday','tuesday','wednesday','thursday','friday','saturday'])
 
         goodAnswers = []
@@ -26,7 +27,8 @@ class AnswerProcessingTaskExecutor(TaskExecutor):
             passage = passage.replace("\n", " ")
 
             if session.question.category in [QCat.DATETIME, QCat.DATE, QCat.DAY, QCat.MONTH, QCat.YEAR]:
-                if re.match(monthRegex, session.question.text.lower()) or len(daySet.intersection(session.question.text.lower().split())) > 0:
+                print ("When Question Found:" + session.question.text)
+                if re.match(monthRegex, session.question.text.lower()) or len(daySet.intersection(session.question.text.lower().split())) > 0 or re.match(yearRegex, session.question.text.lower()):
                     goodAnswers.append((passage, docId))
                 else:
                     badAnswers.append((passage, docId))

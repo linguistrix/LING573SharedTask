@@ -29,6 +29,7 @@ def addFolderToIndex(ix, folderpath):
 
     for root, _, files in os.walk(folderpath):
         for f in files:
+            print (f)
             fullpath = os.path.join(root, f)
             addFileToIndex(ix, fullpath)
             count += 1
@@ -43,13 +44,13 @@ def addFileToIndex(ix, filepath):
 
     with ix.writer() as writer:
         for doc in soup.find_all('DOC'):
-            doc_no = doc.DOCNO.string.strip()
+            doc_no = unicode(doc.DOCNO.string.strip())
             if doc.HEADLINE is not None:
-                headline = doc.HEADLINE.string.strip()
+                headline = unicode(doc.HEADLINE.string.strip())
             else:
-                headline = ''
-            body = doc.TEXT.get_text().strip()
-
+                headline = u''
+            body = unicode(doc.TEXT.get_text().strip())
+            #print ('{0}, {1}, {2}'.format(doc_no, headline, body))
             writer.add_document(docno=doc_no, headline=headline, body=body)
 
 def doc2index(docpath, indexpath):
