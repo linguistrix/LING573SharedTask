@@ -25,7 +25,7 @@ class Session(object):
         self.index = whoosh.index.open_dir(self.indexPath)
 
         self.question = question
-        self.query = QuestionProcessor(self.index).GetDocumentRetrievalQuery(question, self.index.schema)
+        self.query = QuestionProcessor().GetDocumentRetrievalQuery(question, self.index.schema)
 
         self.relevantDocuments = None
         self.relevantPassages = None

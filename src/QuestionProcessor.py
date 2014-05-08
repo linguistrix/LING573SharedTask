@@ -8,8 +8,8 @@ from whoosh import qparser
 import re
 
 class QuestionProcessor(object):
-    def __init__(self, index):
-        self.index = index
+    def __init__(self):
+        pass
 
     def GetDocumentRetrievalQuery(self, question, schema):
         wordsToRemove = set([
