@@ -26,7 +26,7 @@ class QuestionProcessor(object):
             "does",
             "?"])
 
-        wordList = [x for x in question.GetWordList() if x not in wordsToRemove]
+        wordList = [x.lower() for x in question.GetWordList() if x not in wordsToRemove]
 
         og = qparser.OrGroup.factory(0.9)
 
