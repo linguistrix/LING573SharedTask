@@ -11,27 +11,6 @@ class SimpleQuestion(object):
     def GetWordList(self):
         return self.text.split()
 
-"""
-def GenerateClassifier():
-    label = {}
-    with open("../processed/gold_2005.txt") as uiucLabelFile:
-        for line in uiucLabelFile:
-            line = line.split()
-            label[line[0]] = line[1]
-
-    trainData = []
-    xmlPath = "/opt/dropbox/13-14/573/Data/Questions/training/TREC-2005.xml"
-    questions = GetAllQuestions(xmlPath)
-    factory = QuestionFeatureFactory("TRECParses")
-    for question in questions:
-        features = factory.GetAllFeatures(question)
-        trainData.append( (features, label[question.id]) )
-
-    classifier = SklearnClassifier(SVC()).train(trainData)
-    with open("QuestionClassifier.svm", "wb") as classiFile:
-        pickle.dump(classifier, classiFile)
-"""
-
 # Use UIUC data to train a classifier
 def GenerateClassifier():
     label = {}
@@ -42,7 +21,8 @@ def GenerateClassifier():
 
     trainData = []    
     ii = 0
-    factory = QuestionFeatureFactory("UIUCParses")
+    factory = QuestionFeatureFactory()
+    factory.setMode("UIUC")
     with open("../processed/tokenized_uiuc.txt") as uiucFile:
         for line in uiucFile:
             ii += 1
@@ -67,7 +47,8 @@ def TestClassifier(TRECYear):
     xmlPath = "/opt/dropbox/13-14/573/Data/Questions/training/TREC-" + TRECYear + ".xml"
     questions = GetAllQuestions(xmlPath)
 
-    factory = QuestionFeatureFactory("TRECParses")
+    factory = QuestionFeatureFactory()
+    factory.setMode("TREC")
     with open("QuestionClassifier.svm", "rb") as classiFile:
         classifier = pickle.load(classiFile)
         hit = 0

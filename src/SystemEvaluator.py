@@ -25,7 +25,6 @@ def GetAllQuestions(questionsFilename):
 
             if question.type == 'FACTOID':
                 questions.append(question)
-	questions = ClassifyQuestions(questions)	
     return questions
 
 if __name__ == '__main__':
@@ -40,6 +39,7 @@ if __name__ == '__main__':
     questions = GetAllQuestions(questionsFilename)
 
     mainFacilitator = MainFacilitator()
+    mainFacilitator.setMode("TREC")
 
     with open(resultFilename, "w") as resultFile:
         for question in questions:
