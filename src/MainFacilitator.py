@@ -7,6 +7,7 @@
 
 from nltk import word_tokenize
 from TaskExecutor import *
+from QuestionClassificationTaskExecutor import *
 from DocumentRetrievalTaskExecutor import *
 from PassageRetrievalTaskExecutor import *
 from AnswerProcessingTaskExecutor import *
@@ -17,7 +18,7 @@ class Question(object):
         self.type = type
         self.text = text
         self.target = target
-        self.type = None
+        #self.type = None
 
     def __str__(self):
         return " | ".join([self.id, self.type, self.text, self.target])
@@ -31,6 +32,7 @@ class MainFacilitator(object):
 
     def InitializeTaskExecutors(self):
         self.taskExecutors = []
+        self.taskExecutors.append(QuestionClassificationTaskExecutor())
         self.taskExecutors.append(DocumentRetrievalTaskExecutor())
         self.taskExecutors.append(PassageRetrievalTaskExecutor())
         self.taskExecutors.append(AnswerProcessingTaskExecutor())

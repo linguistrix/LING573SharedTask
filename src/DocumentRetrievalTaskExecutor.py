@@ -16,16 +16,12 @@ class DocumentRetrievalTaskExecutor(TaskExecutor):
         TaskExecutor.__init__(self, "DocumentRetrievalTaskExecutor")
 
     def Execute(self, session):
-        question = session.question
-        query = session.query
-        #session.logs.append("Query: {0}".format(query))
         
         results = self.__queryIndex(
             session.index,
-            query, 
+            session.query, 
             N=session.maxNumberOfReturnedDocuments)
 
-        session.query = query
         session.relevantDocuments = results
 
         for result in results:

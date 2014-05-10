@@ -34,6 +34,5 @@ class Session(object):
         self.logs = []
         self.logs.append("Question: {0}".format(question.text))
 
-
     def GetLogs(self):
         return "\n".join(self.logs) 
