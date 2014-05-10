@@ -3,12 +3,22 @@
 
 # QuestionClassifier.py
 # Provides routines to classify a question
-import re
+from QuestionFeatureFactory import QuestionFeatureFactory
+import pickle, re, os, sys
 
-class QCat:
-    DATETIME, YEAR, MONTH, DAY, DATE = range(1, 6)
 
 def ClassifyQuestions(questions):
+
+    factory = QuestionFeatureFactory()
+    with open(os.path.join(sys.path[0], "QuestionClassifier.svm"), "rb") as classiFile:
+        classifier = pickle.load(classiFile)
+        for question in questions:
+            features = factory.GetAllFeatures(question)
+            question.type = classifier.classify(features)
+            
+
+
+    """
     # Takes in a list of type Question and returns the list with the Question.category field populated.
     regexDict = {}
     regexDict['DAYMONTH'] = r"(in|on|at) (what|which) (date|day|month|year)"
@@ -21,16 +31,12 @@ def ClassifyQuestions(questions):
         else:
             whenFlag = False
             if "when" in splitText[:2]:
-                question.category = QCat.DATETIME
+                question.category = "DATETIME"
             else:
-                matchedDict = {"month": QCat.MONTH, "day": QCat.DAY, "date": QCat.DATE, "year": QCat.YEAR }
+                matchedDict = {"month": "MONTH", "day": "DAY", "date": "DATE", "year": "YEAR" }
                 matcher = re.match(regexDict['DAYMONTH'], searchText)
                 if matcher is not None:
                     matched = matcher.group(3)
                     question.category = matchedDict[matched]
-
+    """
     return questions
-
-
-
-

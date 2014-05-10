@@ -17,7 +17,7 @@ class Question(object):
         self.type = type
         self.text = text
         self.target = target
-        self.category = None
+        self.type = None
 
     def __str__(self):
         return " | ".join([self.id, self.type, self.text, self.target])

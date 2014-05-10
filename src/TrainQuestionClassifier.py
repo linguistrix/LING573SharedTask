@@ -38,7 +38,7 @@ def GenerateClassifier():
     with open("../processed/gold_uiuc.txt") as uiucLabelFile:
         for line in uiucLabelFile:
             line = line.split()
-            label[line[0]] = line[1]
+            label[line[0]] = line[1] + ":" + line[2]
 
     trainData = []    
     ii = 0
@@ -74,7 +74,7 @@ def TestClassifier(TRECYear):
         for question in questions:
             features = factory.GetAllFeatures(question)
             prediction = classifier.classify(features)
-            if prediction == label[question.id]:
+            if prediction.split(":")[0] == label[question.id]:
                 hit += 1
         return hit / float(len(questions))
 

@@ -1,9 +1,11 @@
 from nltk.tree import Tree
+from nltk.stem import WordNetLemmatizer
 from ParserTagger import tagPOS
 from collections import deque, Counter
-import pickle
+import pickle, os, sys
 
 WH_LIST = ["who", "whom", "when", "where", "what", "which", "whose", "why", "how"]
+stem = WordNetLemmatizer().lemmatize
 
 # Get all paths from the root to the leaves, from left to right
 def GetAllPaths(tree):
@@ -55,7 +57,7 @@ def FindWhWord(target=None):
 
 class QuestionFeatureFactory(object):
     def __init__(self, parsePath = "TRECParses"):
-        with open(parsePath, "rb") as parseFile:
+        with open(os.path.join(sys.path[0], parsePath), "rb") as parseFile:
             self.parse = pickle.load(parseFile)
 
     def GetAllFeatures(self, question):
@@ -65,7 +67,7 @@ class QuestionFeatureFactory(object):
         # Get the unigram features
         wordList = [w.lower() for w in question.GetWordList()]
         for word in wordList:
-            features["unigram=" + word] +=1
+            features["unigram=" + word] += 1
 
         # Get other features
         t = parse[question.id]
@@ -103,7 +105,7 @@ class QuestionFeatureFactory(object):
                         break
         
         if head is not None:
-            head = head.lower()
+            head = stem(head.lower())
             features["head=" + head] = 1
         
         return features

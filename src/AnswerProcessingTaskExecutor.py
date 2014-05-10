@@ -5,7 +5,6 @@
 # Comes up with an answer given the relevant passages and query 
 
 from TaskExecutor import *
-from QuestionClassifier import QCat
 
 class AnswerProcessingTaskExecutor(TaskExecutor):
     def __init__(self):
@@ -26,7 +25,7 @@ class AnswerProcessingTaskExecutor(TaskExecutor):
         for passage, docId in session.relevantPassages[:20]:
             passage = passage.replace("\n", " ")
 
-            if session.question.category in [QCat.DATETIME, QCat.DATE, QCat.DAY, QCat.MONTH, QCat.YEAR]:
+            if session.question.type == "NUM:date":# category in ["DATETIME", "DATE", "DAY", "MONTH", "YEAR"]:
                 print ("When Question Found:" + session.question.text)
                 if re.match(monthRegex, session.question.text.lower()) or len(daySet.intersection(session.question.text.lower().split())) > 0 or re.match(yearRegex, session.question.text.lower()):
                     goodAnswers.append((passage, docId))
