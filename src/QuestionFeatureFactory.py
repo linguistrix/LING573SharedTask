@@ -1,8 +1,11 @@
 from nltk.tree import Tree
-from collections import deque
+from nltk.corpus import stopwords
+from ParserTagger import tagPOS
+from collections import deque, Counter
 import pickle
 
-WH_LIST = ["who", "whom", "when", "where", "what", "which", "why", "how"]
+WH_LIST = ["who", "whom", "when", "where", "what", "which", "whose", "why", "how"]
+STOP = stopwords.words('english')
 
 # Get all paths from the root to the leaves, from left to right
 def GetAllPaths(tree):
@@ -45,7 +48,7 @@ def FindWhWord(target=None):
         return "rest"
     else:
         # find the first wh-word
-        # however, that should not be one that introducce a subordinating clause
+        # however, that should not be one that introducce a subordinate clause
         for path in GetAllPaths(target):
             leafWord = path[-1].lower()
             if leafWord in WH_LIST and "SBAR" not in path[1:]:
@@ -53,18 +56,19 @@ def FindWhWord(target=None):
     return "rest"
 
 class QuestionFeatureFactory(object):
-    def __init__(self):
-        with open("AllParses", "rb") as AllParses:
-            self.parse = pickle.load(AllParses)
+    def __init__(self, parsePath = "TRECParses"):
+        with open(parsePath, "rb") as parseFile:
+            self.parse = pickle.load(parseFile)
 
     def GetAllFeatures(self, question):
         parse = self.parse
-        features = {}
+        features = Counter()
 
         # Get the unigram features
         wordList = [w.lower() for w in question.GetWordList()]
-        #for w in wordList:
-        #    features["unigram=" + w] = 1 #+=1
+        for word in wordList:
+             if word not in STOP:
+                 features["unigram=" + word] =1#+=1
 
         # Get other features
         t = parse[question.id]
@@ -76,27 +80,34 @@ class QuestionFeatureFactory(object):
         head = None
         if whWord == "how":
             head = wordList[wordList.index("how") + 1]
-        elif whWord == "what" or whWord == "which" or whWord == "rest":
-            focus = None
-            focus = FindNode(target, "WHNP")
-            if focus is not None:
-                for path in GetAllPaths(focus):
-                    if path[-2][:2] == "NN":
-                        head = path[-1]
-            if head is None:
-                focus = FindNode(target, "NP")
+        
+        elif whWord == "rest" or whWord == "what" or whWord == " which" or whWord == "whose":
+            if target is not None:
+                focus = FindNode(target, "WHNP")
                 if focus is not None:
-                    minDepth = 99999
-                    paths = GetAllPaths(focus)
-                    for path in paths:
-                        if path[-2][:2] == "NN" and len(path) <= minDepth:
-                            minDepth = len(path)
+                    for path in GetAllPaths(focus):
+                        if path[-2][:2] == "NN":
                             head = path[-1]
-                    if minDepth == 99999:
-                        head = paths[-1][-1]
-
+                if head is None:
+                    focus = FindNode(target, "NP")
+                    if focus is not None:
+                        minDepth = 99999
+                        paths = GetAllPaths(focus)
+                        for path in paths:
+                            if path[-2][:2] == "NN" and len(path) <= minDepth:
+                                minDepth = len(path)
+                                head = path[-1]
+                        if minDepth == 99999:
+                            head = paths[-1][-1]
+            if head is None:
+                for word, POS in tagPOS(wordList):
+                    if POS[:2] == "NN":
+                        head = word
+                        break
+        
         if head is not None:
-            features["head=" + str(head)] = 1
-
+            head = head.lower()
+            features["head=" + head] = 1
+        
         return features
 

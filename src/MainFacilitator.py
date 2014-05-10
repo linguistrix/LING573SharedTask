@@ -23,8 +23,7 @@ class Question(object):
         return " | ".join([self.id, self.type, self.text, self.target])
 
     def GetWordList(self):
-        return [x for x in word_tokenize(self.text)]
-
+        return word_tokenize(self.text)
 
 class MainFacilitator(object):
     def __init__(self):
