@@ -18,7 +18,6 @@ class Question(object):
         self.type = type
         self.text = text
         self.target = target
-        #self.type = None
 
     def __str__(self):
         return " | ".join([self.id, self.type, self.text, self.target])
@@ -28,7 +27,11 @@ class Question(object):
 
 class MainFacilitator(object):
     def __init__(self):
+        self.SetMode(None)
         self.InitializeTaskExecutors()
+
+    def SetMode(self, mode):
+        self.mode = mode
 
     def InitializeTaskExecutors(self):
         self.taskExecutors = []
@@ -38,7 +41,7 @@ class MainFacilitator(object):
         self.taskExecutors.append(AnswerProcessingTaskExecutor())
 
     def AnswerQuestion(self, question):
-        session = Session(question)
+        session = Session(question, self.mode)
         
         for taskExecutor in self.taskExecutors:
             if (False == taskExecutor.Execute(session)):

@@ -40,6 +40,7 @@ if __name__ == '__main__':
     questions = GetAllQuestions(questionsFilename)
 
     mainFacilitator = MainFacilitator()
+    mainFacilitator.SetMode("TREC")
 
     with open(resultFilename, "w") as resultFile:
         for question in questions:

@@ -1,7 +1,7 @@
 from nltk.tree import Tree
 from nltk.stem import WordNetLemmatizer
-from ParserTagger import tagPOS
 from collections import deque, Counter
+import ParserTagger
 import pickle, os, sys
 
 WH_LIST = ["who", "whom", "when", "where", "what", "which", "whose", "why", "how"]
@@ -56,9 +56,24 @@ def FindWhWord(target=None):
     return "rest"
 
 class QuestionFeatureFactory(object):
-    def __init__(self, parsePath = "TRECParses"):
-        with open(os.path.join(sys.path[0], parsePath), "rb") as parseFile:
-            self.parse = pickle.load(parseFile)
+    def __init__(self):
+        self.mode = None
+
+    def SetMode(self, mode):
+        if (self.mode == mode):
+            return
+
+        self.mode = mode
+        if not mode:
+            self.parse = (lambda q: ParserTagger.parse(ParserTagger.tokenize(q.text)))
+        elif mode == "TREC":
+            with open(os.path.join(sys.path[0], "TRECParses"), "rb") as parseFile:
+                AllParses = pickle.load(parseFile)
+                self.parse = (lambda q: AllParses[q.id])
+        elif mode == "UIUC":
+            with open(os.path.join(sys.path[0], "UIUCParses"), "rb") as parseFile:
+                AllParses = pickle.load(parseFile)
+                self.parse = (lambda q: AllParses[q.id])
 
     def GetAllFeatures(self, question):
         parse = self.parse
@@ -70,7 +85,7 @@ class QuestionFeatureFactory(object):
             features["unigram=" + word] += 1
 
         # Get other features
-        t = parse[question.id]
+        t = parse(question)
         target = FindTarget(t)
         
         whWord = FindWhWord(target)
@@ -99,7 +114,7 @@ class QuestionFeatureFactory(object):
                         if minDepth == 99999:
                             head = paths[-1][-1]
             if head is None:
-                for word, POS in tagPOS(wordList):
+                for word, POS in ParserTagger.tagPOS(wordList):
                     if POS[:2] == "NN":
                         head = word
                         break

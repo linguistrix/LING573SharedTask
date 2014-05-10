@@ -24,6 +24,7 @@ class QuestionClassificationTaskExecutor(TaskExecutor):
             session.logs.append("[ERROR]: Session has no question")
             return False
         
+        self.questionFeatureFactory.SetMode(session.mode) 
         features = self.questionFeatureFactory.GetAllFeatures(session.question)
         session.question.type = self.classifier.classify(features)
        

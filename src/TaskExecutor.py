@@ -18,7 +18,7 @@ class TaskExecutor(object):
 
 
 class Session(object):
-    def __init__(self,  question):
+    def __init__(self, question, mode):
         
         self.corpusPath = "/corpora/LDC/LDC02T31"
         self.indexPath = "/home2/abothale/ling573/LING573SharedTask/src/index"
@@ -26,6 +26,7 @@ class Session(object):
 
         self.question = question
         self.query = QuestionProcessor().GetDocumentRetrievalQuery(question, self.index.schema)
+        self.mode = mode
 
         self.relevantDocuments = None
         self.relevantPassages = None
