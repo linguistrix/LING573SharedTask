@@ -1,11 +1,9 @@
 from nltk.tree import Tree
-from nltk.corpus import stopwords
 from ParserTagger import tagPOS
 from collections import deque, Counter
 import pickle
 
 WH_LIST = ["who", "whom", "when", "where", "what", "which", "whose", "why", "how"]
-STOP = stopwords.words('english')
 
 # Get all paths from the root to the leaves, from left to right
 def GetAllPaths(tree):
@@ -67,8 +65,7 @@ class QuestionFeatureFactory(object):
         # Get the unigram features
         wordList = [w.lower() for w in question.GetWordList()]
         for word in wordList:
-             if word not in STOP:
-                 features["unigram=" + word] =1#+=1
+            features["unigram=" + word] +=1
 
         # Get other features
         t = parse[question.id]
