@@ -26,7 +26,7 @@ class QuestionClassificationTaskExecutor(TaskExecutor):
         
         self.questionFeatureFactory.SetMode(session.mode) 
         features = self.questionFeatureFactory.GetAllFeatures(session.question)
-        session.question.type = self.classifier.classify(features)
+        session.question.answerType = self.classifier.classify(features)
        
         self.LogTaskCompletion(session)
         return True

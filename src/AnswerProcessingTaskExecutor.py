@@ -33,8 +33,8 @@ class AnswerProcessingTaskExecutor(TaskExecutor):
         for passage, docId in session.relevantPassages[:20]:
             passage = passage.replace("\n", " ")
 
-            features = self.factory.GetAllFeatures(session.question)
-            answerType = self.classifier.classify(features)
+            answerType = session.question.answerType 
+            
             if answerType == "NUM:date":
             #if session.question.category in ["DATETIME", "DATE", "DAY", "MONTH", "YEAR"]:
                 print ("When Question Found:" + session.question.text)
