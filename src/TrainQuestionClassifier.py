@@ -22,7 +22,7 @@ def GenerateClassifier():
     trainData = []    
     ii = 0
     factory = QuestionFeatureFactory()
-    factory.setMode("UIUC")
+    factory.SetMode("UIUC")
     with open("../processed/tokenized_uiuc.txt") as uiucFile:
         for line in uiucFile:
             ii += 1
@@ -48,7 +48,7 @@ def TestClassifier(TRECYear):
     questions = GetAllQuestions(xmlPath)
 
     factory = QuestionFeatureFactory()
-    factory.setMode("TREC")
+    factory.SetMode("TREC")
     with open("QuestionClassifier.svm", "rb") as classiFile:
         classifier = pickle.load(classiFile)
         hit = 0

@@ -58,14 +58,15 @@ def FindWhWord(target=None):
 class QuestionFeatureFactory(object):
     def __init__(self):
         self.mode = None
+        self.parse = (lambda q: ParserTagger.parse(' '.join(ParserTagger.tokenize(q.text))))
 
     def SetMode(self, mode):
-        if (self.mode == mode):
+        if self.mode == mode:
             return
 
         self.mode = mode
         if not mode:
-            self.parse = (lambda q: ParserTagger.parse(ParserTagger.tokenize(q.text)))
+            self.parse = (lambda q: ParserTagger.parse(' '.join(ParserTagger.tokenize(q.text))))
         elif mode == "TREC":
             with open(os.path.join(sys.path[0], "TRECParses"), "rb") as parseFile:
                 AllParses = pickle.load(parseFile)

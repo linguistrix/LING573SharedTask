@@ -20,16 +20,16 @@ class QuestionClassificationTaskExecutor(TaskExecutor):
             self.classifier = pickle.load(classiFile)
 
     def Execute(self, session):
+
+        questionFeatureFactory = self.questionFeatureFactory
+
         if session.question == None:
             session.logs.append("[ERROR]: Session has no question")
             return False
-        
-        self.questionFeatureFactory.SetMode(session.mode) 
-        features = self.questionFeatureFactory.GetAllFeatures(session.question)
-        session.question.answerType = self.classifier.classify(features)
-       
+
+        questionFeatureFactory.SetMode(session.mode) 
+        features = questionFeatureFactory.GetAllFeatures(session.question)
+        session.answerType = self.classifier.classify(features)
+
         self.LogTaskCompletion(session)
         return True
-
-            
-
