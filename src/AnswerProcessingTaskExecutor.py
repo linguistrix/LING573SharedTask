@@ -21,7 +21,7 @@ class AnswerProcessingTaskExecutor(TaskExecutor):
         monthRegex = r'(january|february|march|april|may|june|july|august|september|october|november|december)'
         yearRegex = r'\d{4}'
         daySet = set(['sunday','monday','tuesday','wednesday','thursday','friday','saturday'])
-
+        numberRegex = r'\$?[{0-9},.]+'
         goodAnswers = []
         badAnswers = []
 
@@ -42,12 +42,22 @@ class AnswerProcessingTaskExecutor(TaskExecutor):
                 print ("Answer is of HUM type!")
                 # If answer is of some human type                
                 goodAnswers.append((passage, docId))
-            elif answerType == "NUM:date":
+            if answerType == "NUM:date":
                 print ("When Question Found!")
-                if re.match(monthRegex, session.question.text.lower()) or len(daySet.intersection(session.question.text.lower().split())) > 0 or re.match(yearRegex, session.question.text.lower()):
+                monthmatch = re.findall(monthRegex, passage.lower())
+                daymatch = list(daySet.intersection(passage.lower().split()))
+                yearmatch = re.findall(yearRegex, passage.lower())
+                if monthmatch or daymatch or yearmatch:
+                    print ("Found a time match") 
+                    #goodAnswers.append((' '.join(monthmatch + daymatch + yearmatch), docId))
                     goodAnswers.append((passage, docId))
                 else:    
                     badAnswers.append((passage, docId))
+            elif answerType[:3] == "NUM":
+                nummatch = re.findall(numRegex, passage.lower())
+                print ("Found a number match")
+                #goodAnswers.append((' '.join(nummatch), docId))
+                goodAnswers.append((passage, docId))
             else:
                 badAnswers.append((passage, docId))
         
