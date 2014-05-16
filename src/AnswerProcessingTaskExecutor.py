@@ -54,7 +54,7 @@ class AnswerProcessingTaskExecutor(TaskExecutor):
                 else:    
                     badAnswers.append((passage, docId))
             elif answerType[:3] == "NUM":
-                nummatch = re.findall(numRegex, passage.lower())
+                nummatch = re.findall(numberRegex, passage.lower())
                 print ("Found a number match")
                 #goodAnswers.append((' '.join(nummatch), docId))
                 goodAnswers.append((passage, docId))

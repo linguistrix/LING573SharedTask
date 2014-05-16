@@ -16,6 +16,8 @@ class DocumentRetrievalTaskExecutor(TaskExecutor):
         TaskExecutor.__init__(self, "DocumentRetrievalTaskExecutor")
 
     def Execute(self, session):
+            
+        session.logs.append("Query: {0}".format(session.query))
         
         results = self.__queryIndex(
             session.index,

@@ -8,9 +8,18 @@
 from MainFacilitator import *
 
 mainFacilitator = MainFacilitator()
+mainFacilitator.SetMode("TREC")
 
-question = Question("123", "FACTOID", "When did it become a state?", "Idaho")
-answer = mainFacilitator.AnswerQuestion(question).answers
+question = Question(
+    "149.1",
+    "FACTOID",
+    "The Daily Show appears on what cable channel?",
+    "The Daily Show")
+
+session = mainFacilitator.AnswerQuestion(question)
+print("\n".join(session.logs))
+
+answer = session.answers
 
 print("Q: {0}".format(question))
 print("A: {0}".format(answer))
