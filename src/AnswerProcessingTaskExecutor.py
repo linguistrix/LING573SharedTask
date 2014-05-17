@@ -63,13 +63,27 @@ class AnswerProcessingTaskExecutor(TaskExecutor):
         
                 #goodAnswers.append((passage, docId))
             #if session.question.category in ["DATETIME", "DATE", "DAY", "MONTH", "YEAR"]:
-                
-
-
+            
+        session.logs.append("Good answers: {0} | Bad answers: {1}".format(len(goodAnswers), len(badAnswers)))
+        
+            
         session.answers = goodAnswers + badAnswers
         for (passage, docId) in session.answers:
             session.logs.append("Answer: {0} | {1}".format(passage, docId))
         
         self.LogTaskCompletion(session)
         return True
+
+    def CheckIfPassageContainsTopBigramsFromWeb(self, passage, topBigrams):
+        passageBigrams = Set()
+        tokens = word_tokenize(passage.lower())
+        for i in range(0, len(tokens) - 1):
+            bigram = "_".join(tokens[i:i+2])
+            passageBigrams.add(bigram)
+     
+        for eachTopBigram in topBigrams:
+            if eachTopBigram.lower() in passageBigrams:
+                return True
+        
+        return False
 

@@ -28,6 +28,7 @@ class Session(object):
         self.mode = mode
 
         self.query = None 
+        self.topBigramsFromWeb = None 
         self.relevantDocuments = None
         self.relevantPassages = None
         self.answers = None
