@@ -3,7 +3,6 @@
 
 # TaskExecutor.py
 
-from QuestionProcessor import *
 import whoosh.index
 
 class TaskExecutor(object):
