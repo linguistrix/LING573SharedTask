@@ -71,6 +71,11 @@ Fig 1: class diagram of the MIM QA system
 \subsection{Question Processing}
 Our current question processing module only removes the {\it wh-} words in the question and feed the rest of the question text as a bag of words to the document retrieval modeule. In the next deliverable we would like to do some machine learning-based question classification so that in the downstream we will be able to verify whther the answer is suitable for the specific question type.
 
+\subsection{Query Expansion by Redundancy-based Web-boosting}
+We implemented query expansion using a redundancy-based web-boosting strategy. The original question is passed to the Ask.com search engine and the snippets of the first 40 results are extracted. From these snippets we obtain bigram counts and keep only the top 10 most frequent ones that do not contain any words from the original question. Often times, we found these top bigrams to  contain the correct answer to the questions.
+
+We then harvest unique terms from these top bigrams and add them to the query to the document retrieval system. We were able to increase our accuracy significantly.
+
 \subsection{Document Retrieval}
 The Document Retrieval Subsystem takes a document retrieval query from the session and populates the session with a list of hits from the indexing and retrieval system, as described below. This list of documents is then used for Passage Retrieval and Answer Processing.
 
