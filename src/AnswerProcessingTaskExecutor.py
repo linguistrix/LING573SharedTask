@@ -69,6 +69,8 @@ class AnswerProcessingTaskExecutor(TaskExecutor):
         
             
         session.answers = goodAnswers + badAnswers
+        session.answers = map(lambda x: x[:250], session.answers)
+
         for (passage, docId) in session.answers:
             session.logs.append("Answer: {0} | {1}".format(passage, docId))
         
