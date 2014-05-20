@@ -8,12 +8,10 @@ Results for D2 can be reproduced by running ./D2_run_all.sh
 D2 report can be found at doc/reports/D2.pdf
 
 D3
-Lenient Score: 0.3612
-Strict Score: 0.2419
+Lenient Score: 0.3609
+Strict Score: 0.2433
 
 Execute the following commands to reproduce the results:
-
-mkdir parallel_run_output
 
 ./GenerateParallelDevTestRunCondorScript.sh 
 
