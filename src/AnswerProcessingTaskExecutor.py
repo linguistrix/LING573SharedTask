@@ -6,6 +6,7 @@
 
 from TaskExecutor import *
 import pickle, os, sys, nltk
+import re
 
 class AnswerProcessingTaskExecutor(TaskExecutor):
     def __init__(self):
