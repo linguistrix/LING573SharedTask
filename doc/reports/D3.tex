@@ -46,7 +46,7 @@
 \begin{document}
 \maketitle
 \begin{abstract}
-We detail the work currently done on MIM, our Question Answering system. We report a Lenient score of 0.364, and detail the improvements made in the system to achieve said score.
+We detail the work currently done on MIM, our Question Answering system. We report a lenient MRR score of 0.3609 (strict score 0.2433), and detail the improvements made in the system to achieve said score.
 \end{abstract}
 
 \section{Introduction}
@@ -74,7 +74,7 @@ We build an SVM classifier that classifies a given question into one of the ques
 We train the classifier on the dataset from \cite{uiuc} with 5500 labeled questions, and test the classifier on TREC 2004 and 2005 question-answering data. Since the test data are only labeled for coarse-grained question types (6 classes), we can only evaluate the classifier with coarse-grained classification, for which our SVM classifier achieves 87\% accuracy. However, for our end-to-end system we retrained the classifier for fine-grained question classification (50 classes) because coarse-grained class label does not provide sufficient information for selecting correct answers.
 
 \subsection{Query Formation by Redundancy-based Web-boosting}
-In this step we convert the question into a query that can be used for document retrieval. The query indicates that the subsequent module should search for the question terms (except the {\it words}) in the body text, and for the target words either in the title or the body text.
+In this step we convert the question into a query that can be used for document retrieval. The query indicates that the subsequent module should search for the question terms (except the {\it Wh-} words) in the body text, and for the target words either in the title or the body text.
 
 We implemented query expansion using a redundancy-based web-boosting strategy. The original question (together with the target words) is passed to the Ask.com search engine and the snippets of the first 40 results are extracted. From these snippets we obtain bigram counts and keep only the top 10 most frequent ones that do not contain any words from the original question. Often times, we found these top bigrams to  contain the correct answer to the questions.
 
@@ -96,7 +96,7 @@ We do re-ranking based on pattern matching, and then chop off anything after 250
 
 \section{Results}
 
-Under the baseline system, we obtain an aggregate score of 0.241 under the Strict evaluation scheme, and an aggregate score of 0.364 under the Lenient evaluation scheme.
+Under the baseline system, we obtain an aggregate score of 0.2433 under the Strict evaluation scheme, and an aggregate score of 0.3609 under the Lenient evaluation scheme.
 
 The big improvement from last deliverable comes from several sources: First, we include the target words in our query; second, we use the whole sentence rather than automatically generated snippets as our answers; third, we exploit search results from the World Wide Web and use question classification and relevant answer re-ranking.
 
