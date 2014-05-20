@@ -2,7 +2,7 @@ from nltk.tree import Tree
 from nltk.stem import WordNetLemmatizer
 from collections import deque, Counter
 import ParserTagger
-import pickle, os, sys
+import re, pickle, os, sys
 
 WH_LIST = ["who", "whom", "when", "where", "what", "which", "whose", "why", "how"]
 stem = WordNetLemmatizer().lemmatize
@@ -54,6 +54,21 @@ def FindWhWord(target=None):
             if leafWord in WH_LIST and "SBAR" not in path[1:]:
                 return leafWord
     return "rest"
+
+def GetWordShape(word):
+    if not word:
+        return "shape=empty"
+    if re.match("[^A-Za-z1-9]+$", word):
+        return "shape=unknown"
+    if re.match("[^A-Za-z]+$", word):
+        return "shape=digits"
+    if word.upper() == word:
+        return "shape=allUpper"
+    if word.lower() == word:
+        return "shape=allLower"
+    if word.lower()[1:] == word[1:]:
+        return "shape=firstUpper"
+    return "shape=mixed"
 
 class QuestionFeatureFactory(object):
     def __init__(self):
@@ -121,6 +136,7 @@ class QuestionFeatureFactory(object):
                         break
         
         if head is not None:
+            features[GetWordShape(head)] = 1
             head = stem(head.lower())
             features["head=" + head] = 1
         

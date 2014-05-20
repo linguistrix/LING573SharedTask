@@ -5,9 +5,6 @@
 # Performs document retrieval given a query session
 
 from TaskExecutor import *
-from CreateIndex import *
-from NewsDocument import Document
-from whoosh import index
 import os, os.path, sys, time
 
 
@@ -31,13 +28,6 @@ class DocumentRetrievalTaskExecutor(TaskExecutor):
         
         self.LogTaskCompletion(session)
         return True
-
-    def __getIndex(self, folderpath):
-        if os.path.exists(folderpath):
-            ix = index.open_dir(folderpath)
-        else:
-            ix = None
-        return ix
 
     def __queryIndex(self, index, query, N=20):
         relevantDocuments = []

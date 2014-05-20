@@ -4,11 +4,11 @@ from MainFacilitator import *
 from nltk import word_tokenize
 from collections import defaultdict
 from sets import Set 
-import os
+import os, sys
 
 class WebSnippetRetrieval(object):
     def __init__(self):
-        self.cachedSnippetsPath = "/home2/jchan3/LING573SharedTask/CachedWebContent/DevTestSnippets"
+        self.cachedSnippetsPath = os.path.join(sys.path[0], "../CachedWebContent/DevTestSnippets")
    
     def GetTopSortedBigramsFromWeb(self, question, n):
         snippets = self.GetWebSnippets(question)

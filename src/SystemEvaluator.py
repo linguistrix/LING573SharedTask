@@ -4,8 +4,6 @@
 import sys
 from bs4 import BeautifulSoup
 from MainFacilitator import *
-from QuestionClassifier import *
-
 
 def GetAllQuestions(questionsFilename):
     questionsFile = open(questionsFilename, "r")
