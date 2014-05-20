@@ -8,8 +8,10 @@ Results for D2 can be reproduced by running ./D2_run_all.sh
 D2 report can be found at doc/reports/D2.pdf
 
 D3
-Lenient Score: 0.3612
-Strict Score: 0.2419
+D2 report can be found at doc/reports/D3.pdf
+
+Lenient Score: 0.364
+Strict Score: 0.241
 
 Execute the following commands to reproduce the results:
 
