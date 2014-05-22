@@ -22,6 +22,9 @@ class AnswerProcessingTaskExecutor(TaskExecutor):
         monthRegex = r'(january|february|march|april|may|june|july|august|september|october|november|december)'
         yearRegex = r'\d{4}'
         daySet = set(['sunday','monday','tuesday','wednesday','thursday','friday','saturday'])
+        numberlist = map(lambda x: x.strip(), open('numberlist').readlines())
+        numbertextregex = '(' + '|'.join(numberlist) + ')( |-|\b)'
+        print "The regex for numbers in words is: " + numbertextregex
         numberRegex = r'\$?[{0-9},.]+'
         goodAnswers = []
         badAnswers = []
@@ -58,7 +61,10 @@ class AnswerProcessingTaskExecutor(TaskExecutor):
                 nummatch = re.findall(numberRegex, passage.lower())
                 print ("Found a number match")
                 #goodAnswers.append((' '.join(nummatch), docId))
-                goodAnswers.append((passage, docId))
+                if nummatch:
+                    goodAnswers.append((passage, docId))
+                else:
+                    badAnswers.append((passage, docId))
             else:
                 badAnswers.append((passage, docId))
         
@@ -76,7 +82,7 @@ class AnswerProcessingTaskExecutor(TaskExecutor):
         
         self.LogTaskCompletion(session)
         return True
-
+'''
     def CheckIfPassageContainsTopBigramsFromWeb(self, passage, topBigrams):
         passageBigrams = Set()
         tokens = word_tokenize(passage.lower())
@@ -90,3 +96,4 @@ class AnswerProcessingTaskExecutor(TaskExecutor):
         
         return False
 
+'''
