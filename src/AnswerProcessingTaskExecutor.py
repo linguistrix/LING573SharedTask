@@ -22,16 +22,16 @@ class AnswerProcessingTaskExecutor(TaskExecutor):
         monthRegex = r'(january|february|march|april|may|june|july|august|september|october|november|december)'
         yearRegex = r'\d{4}'
         daySet = set(['sunday','monday','tuesday','wednesday','thursday','friday','saturday'])
-        numberlist = map(lambda x: x.strip(), open('numberlist').readlines())
-        numbertextregex = '(' + '|'.join(numberlist) + ')( |-|\b)'
-        print "The regex for numbers in words is: " + numbertextregex
+        numberlist = map(lambda x: x.strip(), open(os.path.join(sys.path[0], 'numberlist')).readlines())
+        numberTextRegex = r'(' + r'|'.join(numberlist) + r')( |-|\b)'
+        print "The regex for numbers in words is: " + numberTextRegex
         numberRegex = r'\$?[{0-9},.]+'
         goodAnswers = []
         badAnswers = []
 
         answerType = session.answerType
         
-        for passage, docId in session.relevantPassages[:20]:
+        for passage, docId in session.relevantPassages:
             passage = passage.replace("\n", " ")
 
             ne_tree = nltk.ne_chunk(nltk.pos_tag(nltk.word_tokenize(passage)))
@@ -59,8 +59,10 @@ class AnswerProcessingTaskExecutor(TaskExecutor):
                     badAnswers.append((passage, docId))
             elif answerType[:3] == "NUM":
                 nummatch = re.findall(numberRegex, passage.lower())
+                #numtextmatch = re.findall(numberTextRegex, passage.lower())
                 print ("Found a number match")
                 #goodAnswers.append((' '.join(nummatch), docId))
+                #if nummatch or numtextmatch:
                 if nummatch:
                     goodAnswers.append((passage, docId))
                 else:
@@ -75,6 +77,7 @@ class AnswerProcessingTaskExecutor(TaskExecutor):
         
             
         session.answers = goodAnswers + badAnswers
+        session.answers = session.answers[:20]
         session.answers = map(lambda x: x[:250], session.answers)
 
         for (passage, docId) in session.answers:
