@@ -7,7 +7,6 @@
 from TaskExecutor import *
 from whoosh import qparser
 from WebSnippetRetrieval import *
-from sets import Set
 import re
 
 class QueryFormulationTaskExecutor(TaskExecutor):
@@ -38,18 +37,19 @@ class QueryFormulationTaskExecutor(TaskExecutor):
             session.question,
             10)
 
-        wordListFromWeb = Set()
+        wordListFromWeb = set()
         for eachBigram in session.topBigramsFromWeb:
             words = eachBigram.lower().split("_")
             wordListFromWeb.update(words)
 
         wordList.extend(wordListFromWeb)
 
+        schema = session.index.schema
         og = qparser.OrGroup.factory(0.9)
 
-        textParser = qparser.QueryParser("body", session.index.schema, group=og)
-        targetParser = qparser.QueryParser("body", session.index.schema)
-        headlineParser = qparser.QueryParser("headline", session.index.schema, group=og)
+        textParser = qparser.QueryParser("body", schema, group=og)
+        targetParser = qparser.QueryParser("body", schema)
+        headlineParser = qparser.QueryParser("headline", schema, group=og)
 
         target = re.sub("[^\\.A-Za-z0-9]+", " ", session.question.target)
         qtext = re.sub("[^\\.a-z0-9]+", " ", " ".join(wordList))

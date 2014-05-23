@@ -22,16 +22,18 @@ class AnswerProcessingTaskExecutor(TaskExecutor):
         monthRegex = r'(january|february|march|april|may|june|july|august|september|october|november|december)'
         yearRegex = r'\d{4}'
         daySet = set(['sunday','monday','tuesday','wednesday','thursday','friday','saturday'])
-        numberlist = map(lambda x: x.strip(), open(os.path.join(sys.path[0], 'numberlist')).readlines())
-        numberTextRegex = r'(' + r'|'.join(numberlist) + r')( |-|\b)'
-        print "The regex for numbers in words is: " + numberTextRegex
+        numberlistFile = open(os.path.join(sys.path[0], "numberlist"))
+        numberlist = [x.strip() for x in numberlistFile]
+        numberlistFile.close()
+        numbertextregex = '(' + '|'.join(numberlist) + ')( |-|\b)'
+        print "The regex for numbers in words is: " + numbertextregex
         numberRegex = r'\$?[{0-9},.]+'
         goodAnswers = []
         badAnswers = []
 
         answerType = session.answerType
         
-        for passage, docId in session.relevantPassages:
+        for score, passage, docId in session.relevantPassages:
             passage = passage.replace("\n", " ")
 
             ne_tree = nltk.ne_chunk(nltk.pos_tag(nltk.word_tokenize(passage)))
@@ -44,7 +46,7 @@ class AnswerProcessingTaskExecutor(TaskExecutor):
             
             if answerType[:3] == "HUM" and "PERSON" in ne_types:
                 print ("Answer is of HUM type!")
-                # If answer is of some human type                
+                # If answer is of some human type    
                 goodAnswers.append((passage, docId))
             if answerType == "NUM:date":
                 print ("When Question Found!")
@@ -59,10 +61,8 @@ class AnswerProcessingTaskExecutor(TaskExecutor):
                     badAnswers.append((passage, docId))
             elif answerType[:3] == "NUM":
                 nummatch = re.findall(numberRegex, passage.lower())
-                #numtextmatch = re.findall(numberTextRegex, passage.lower())
                 print ("Found a number match")
                 #goodAnswers.append((' '.join(nummatch), docId))
-                #if nummatch or numtextmatch:
                 if nummatch:
                     goodAnswers.append((passage, docId))
                 else:
@@ -74,13 +74,11 @@ class AnswerProcessingTaskExecutor(TaskExecutor):
             #if session.question.category in ["DATETIME", "DATE", "DAY", "MONTH", "YEAR"]:
             
         session.logs.append("Good answers: {0} | Bad answers: {1}".format(len(goodAnswers), len(badAnswers)))
-        
-            
-        session.answers = goodAnswers + badAnswers
-        session.answers = session.answers[:20]
-        session.answers = map(lambda x: x[:250], session.answers)
 
-        for (passage, docId) in session.answers:
+        allAnswers = goodAnswers + badAnswers
+        session.answers = [x[:250] for x in allAnswers[:20]]
+
+        for passage, docId in session.answers:
             session.logs.append("Answer: {0} | {1}".format(passage, docId))
         
         self.LogTaskCompletion(session)

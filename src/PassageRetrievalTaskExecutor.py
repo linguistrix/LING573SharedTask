@@ -21,7 +21,7 @@ class PassageRetrievalTaskExecutor(TaskExecutor):
         self.analyzer = whoosh.analysis.SimpleAnalyzer()
 
     def Execute(self, session):
-        triples = [] #list of (score, fragment, docid) triples
+        triples = set()
         corpusPath = session.corpusPath
         q = session.query
         results = session.relevantDocuments
@@ -39,26 +39,33 @@ class PassageRetrievalTaskExecutor(TaskExecutor):
             tokens = self.analyzer(body, positions=True, chars=True, removestops=False)
             tokens = whoosh.highlight.set_matched_filter(tokens, qwords)
 
-            triples.extend(
-                (self.scorer(f),
-                 removeNewline(self.formatter.format_fragment(f)),
-                 id)
-                    for f in self.fragmenter.fragment_tokens(body, tokens) )
+            triples.update(
+                PassageTriple(self.scorer(f), removeNewline(self.formatter.format_fragment(f)), id)
+                for f in self.fragmenter.fragment_tokens(body, tokens) )
         
-        triples.sort(reverse=True)
+        #triples.sort(reverse=True)
 
-        relevantPassages = []
-        for triple in triples:
-            score = triple[0]
-            relevantPassage = triple[1] 
-            id = triple[2]
-            relevantPassages.append((relevantPassage, id))
-            session.logs.append("Relevant passage: {0} | score: {1}".format(relevantPassage, score)) 
-       
+        relevantPassages = [(triple.score, triple.text, triple.docId) for triple in triples]
+        relevantPassages.sort(reverse=True)
+
+        for score, passage, docId in relevantPassages:
+            session.logs.append("Relevant passage: {0} | score: {1}".format(passage, score))
         session.relevantPassages = relevantPassages
         
         self.LogTaskCompletion(session)
         return True
 
+class PassageTriple(object):
+    def __init__(self, score, text, docId):
+        self.score = score
+        self.text = text
+        self.docId = docId
+
+    def __eq__(self, other):
+        return self.text.lower() == other.text.lower()
+
+    def __hash__(self):
+        return hash(self.text.lower())
+
 def removeNewline(s):
-  return re.sub(r'\s+', ' ', s.strip())
+  return re.sub(r"\s+", " ", s.strip())

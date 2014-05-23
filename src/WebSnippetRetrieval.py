@@ -3,7 +3,6 @@
 from MainFacilitator import *
 from nltk import word_tokenize
 from collections import defaultdict
-from sets import Set 
 import os, sys
 
 class WebSnippetRetrieval(object):
@@ -17,7 +16,7 @@ class WebSnippetRetrieval(object):
         questionText = question.text + " " + question.target
         
         # Remove bigrams that contain words in the original question
-        questionWords = Set(word_tokenize(questionText.lower()))
+        questionWords = set(word_tokenize(questionText.lower()))
         
         for key in bigramCounts.keys():
             for eachWord in questionWords:
@@ -34,7 +33,7 @@ class WebSnippetRetrieval(object):
             filename = os.path.join(
                 self.cachedSnippetsPath,
                 "{0}.snippets".format(question.id))
-            
+
             snippetFile = open(filename, "r")
             snippets = snippetFile.read().split("\n")
             return snippets
