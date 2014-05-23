@@ -33,10 +33,11 @@ def addFolderToIndex(ix, folderpath):
                 continue
                 print ('Skipping ' + f)
             print (f)
+            sys.stdout.flush()
             fullpath = os.path.join(root, f)
             addFileToIndex(ix, fullpath)
             count += 1
-            print count
+            #print count
 
     print('Added {0} files to the Index'.format(count))
 

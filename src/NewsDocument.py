@@ -19,7 +19,7 @@ class Document:
         # Returns True if successful and False if not
         #print folderpath
         if datatype == 'aquaint':
-            filepath = self.getFilePath(docid, folderpath)
+            filepath = self.getFilePath(docid, folderpath, datatype)
 
             if os.path.exists(filepath):
                 f = open(filepath, 'r')
@@ -47,7 +47,7 @@ class Document:
 
                 return True
         elif datatype == 'aquaint2':
-            filepath = self.getFilePath(docid, folderpath)
+            filepath = self.getFilePath(docid, folderpath, datatype)
 
             if os.path.exists(filepath):
                 f = open(filepath, 'r')
@@ -90,7 +90,7 @@ class Document:
         elif datatype == 'aquaint2':
             dirname = docid[:7].lower()
             filename = docid[:14].lower()
-            return os.path.join(folderpath, dirname, filename + '.xml')
+            return os.path.join(folderpath, 'data', dirname, filename + '.xml')
 
 
 
