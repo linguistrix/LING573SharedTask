@@ -17,6 +17,13 @@ def GenerateClassifier():
     with open(os.path.join(sys.path[0], "../processed/gold_uiuc.txt")) as uiucLabelFile:
         for line in uiucLabelFile:
             line = line.split()
+            if line[1] == "HUM" and line[2] != "gr":
+                line[2] = ""
+            elif line[1] == "NUM" and line[2] != "date":
+                line[2] = ""
+            elif line[1] == "DESC":
+                line[2] = ""
+
             label[line[0]] = line[1] + ":" + line[2]
 
     trainData = []    

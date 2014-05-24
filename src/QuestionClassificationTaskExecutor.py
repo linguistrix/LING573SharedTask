@@ -31,5 +31,6 @@ class QuestionClassificationTaskExecutor(TaskExecutor):
         features = questionFeatureFactory.GetAllFeatures(session.question)
         session.answerType = self.classifier.classify(features)
 
+        session.logs.append("Classify answer type: {0}".format(session.answerType))
         self.LogTaskCompletion(session)
         return True
