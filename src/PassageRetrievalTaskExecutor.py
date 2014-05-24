@@ -10,12 +10,10 @@ import re
 import whoosh.analysis
 import whoosh.highlight
 
-MAX_CHAR_NUM = 500
-
 class PassageRetrievalTaskExecutor(TaskExecutor):
     def __init__(self):
         TaskExecutor.__init__(self, "PassageRetrievalTaskExecutor")
-        self.fragmenter = whoosh.highlight.SentenceFragmenter(maxchars=MAX_CHAR_NUM)
+        self.fragmenter = whoosh.highlight.SentenceFragmenter(maxchars=500)
         self.scorer = whoosh.highlight.BasicFragmentScorer()
         self.formatter = whoosh.highlight.NullFormatter()
         self.analyzer = whoosh.analysis.SimpleAnalyzer()
@@ -48,10 +46,10 @@ class PassageRetrievalTaskExecutor(TaskExecutor):
         relevantPassages = [(triple.score, triple.text, triple.docId) for triple in triples]
         relevantPassages.sort(reverse=True)
 
-        for score, passage, docId in relevantPassages:
-            session.logs.append("Relevant passage: {0} | score: {1}".format(passage, score))
         session.relevantPassages = relevantPassages
-        
+
+        for score, passage, docId in relevantPassages: 
+            session.logs.append("Relevant passage: {0} | score: {1}".format(passage, score)) 
         self.LogTaskCompletion(session)
         return True
 
