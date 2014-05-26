@@ -26,9 +26,10 @@ class AnswerProcessingTaskExecutor(TaskExecutor):
         numberlist = [x.strip() for x in numberlistFile]
         numberlistFile.close()
         numbertextregex = '(' + '|'.join(numberlist) + ')( |-|\b)'
-        print "The regex for numbers in words is: " + numbertextregex
+        #print "The regex for numbers in words is: " + numbertextregex
         numberRegex = r'\$?[{0-9},.]+'
         goodAnswers = []
+        mediumAnswers = []
         badAnswers = []
 
         answerType = session.answerType
@@ -43,12 +44,25 @@ class AnswerProcessingTaskExecutor(TaskExecutor):
                     ne_types.append(str(item.node))
                 except AttributeError:
                     pass
-            
-            if answerType[:3] == "HUM" and "PERSON" in ne_types:
+
+            #if answerType == "HUM:gr":
+            #    if "ORGANIZATION" in ne_types or "GSP" in ne_types:
+            #        goodAnswers.append((passage, docId))
+            #    elif "PERSON" in ne_types:
+            #        mediumAnswers.append((passage, docId))
+            if answerType[:3] == "HUM":
                 print ("Answer is of HUM type!")
-                # If answer is of some human type    
-                goodAnswers.append((passage, docId))
-            if answerType == "NUM:date":
+                if "PERSON" in ne_types:
+                    goodAnswers.append((passage, docId))
+                elif "ORGANIZATION" in ne_types or "GSP" in ne_types:
+                    mediumAnswers.append((passage, docId))
+            elif answerType[:3] == "LOC":
+                print ("Answer is of LOC type!")
+                if "GPE" in ne_types or "LOCATION" in ne_types:
+                    goodAnswers.append((passage, docId))
+                elif "ORGANIZATION" in ne_types or "GSP" in ne_types:
+                    mediumAnswers.append((passage, docId))
+            elif answerType == "NUM:date":
                 print ("When Question Found!")
                 monthmatch = re.findall(monthRegex, passage.lower())
                 daymatch = list(daySet.intersection(passage.lower().split()))
@@ -69,14 +83,14 @@ class AnswerProcessingTaskExecutor(TaskExecutor):
                     badAnswers.append((passage, docId))
             else:
                 badAnswers.append((passage, docId))
-        
-                #goodAnswers.append((passage, docId))
-            #if session.question.category in ["DATETIME", "DATE", "DAY", "MONTH", "YEAR"]:
             
-        session.logs.append("Good answers: {0} | Bad answers: {1}".format(len(goodAnswers), len(badAnswers)))
+        session.logs.append("Good answers: {0} | Medium answers: {1} | Bad answers: {2}".format(
+            len(goodAnswers), 
+            len(mediumAnswers),
+            len(badAnswers)))
 
-        allAnswers = goodAnswers + badAnswers
-        session.answers = [x[:250] for x in allAnswers[:20]]
+        allAnswers = goodAnswers + mediumAnswers + badAnswers
+        session.answers = [(x[:250], y) for x, y in allAnswers[:20]]
 
         for passage, docId in session.answers:
             session.logs.append("Answer: {0} | {1}".format(passage, docId))
