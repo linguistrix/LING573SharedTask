@@ -54,7 +54,7 @@ def fetch_snippet_from_ask(html_prefix,q_id,query,count):
     allHtmlContent = "" 
 
     while continued:
-        time.sleep(1)
+        time.sleep(0.5)
         q = url%(ask_query,page)
         page += 1
         

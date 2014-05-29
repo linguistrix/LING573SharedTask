@@ -5,7 +5,6 @@
 import sys
 from bs4 import BeautifulSoup
 from MainFacilitator import *
-from QuestionClassifier import *
 
 def GetAllQuestions(questionsFilename):
     questionsFile = open(questionsFilename, "r")
@@ -30,7 +29,7 @@ def GetAllQuestions(questionsFilename):
 
 if __name__ == '__main__':
     if (len(sys.argv) < 3):
-        print("Usage: ./SystemEvaluator.py question_file result_file")
+        print("Usage: ./GetWebQueries.py question_file result_file")
         sys.exit(1)
     
     questionsFilename = sys.argv[1]
