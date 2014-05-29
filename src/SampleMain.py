@@ -11,10 +11,10 @@ mainFacilitator = MainFacilitator()
 mainFacilitator.SetMode("TREC")
 
 question = Question(
-    "149.1",
+    "178.4",
     "FACTOID",
-    "The Daily Show appears on what cable channel?",
-    "The Daily Show")
+    "In what Texas town did the FBI and ATF destroy a compound killing dozens, but found no methamphetamine lab?",
+    "methamphetamine labs")
 
 session = mainFacilitator.AnswerQuestion(question)
 print("\n".join(session.logs))

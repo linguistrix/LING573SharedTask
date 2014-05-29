@@ -23,9 +23,10 @@ class Document:
 
             if os.path.exists(filepath):
                 f = open(filepath, 'r')
+                html_doc = '<SUPERDOC>' + f.read() + '</SUPERDOC>'
+                f.close()
             else:
                 return False
-            html_doc = '<SUPERDOC>' + f.read() + '</SUPERDOC>'
             soup = BeautifulSoup(html_doc, 'xml')
             for doc in soup.find_all('DOC'):
                 cur_doc_no = doc.DOCNO.string.strip()
@@ -51,9 +52,10 @@ class Document:
 
             if os.path.exists(filepath):
                 f = open(filepath, 'r')
+                html_doc = f.read()
+                f.close()
             else:
                 return False
-            html_doc = f.read()
             soup = BeautifulSoup(html_doc, 'xml')
             for doc in soup.find_all('DOC'):
                 cur_doc_no = unicode(doc['id'])

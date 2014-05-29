@@ -7,6 +7,7 @@
 from TaskExecutor import *
 from whoosh import qparser
 from WebSnippetRetrieval import *
+from verb import *
 import re
 
 class QueryFormulationTaskExecutor(TaskExecutor):
@@ -30,8 +31,18 @@ class QueryFormulationTaskExecutor(TaskExecutor):
             "does",
             "?"])
 
-        wordList = [x.lower() for x in session.question.GetWordList() if x not in wordsToRemove]
-        
+        wordList = [x.lower() for x in session.question.GetWordList()]
+
+        # Morphological expansion
+        if "did" in wordList:
+            for word in set(wordList):
+                if verb_infinitive(word) == word:
+                    wordList.append(verb_past(word))
+        if "does" in wordList:
+            for word in set(wordList):
+                if verb_infinitive(word) == word:
+                    wordList.append(verb_present(word, person=3))
+
         # Add words from top bigrams to the word list
         session.topBigramsFromWeb = self.webSnippetRetrieval.GetTopSortedBigramsFromWeb(
             session.question,
@@ -52,7 +63,7 @@ class QueryFormulationTaskExecutor(TaskExecutor):
         headlineParser = qparser.QueryParser("headline", schema, group=og)
 
         target = re.sub("[^\\.A-Za-z0-9]+", " ", session.question.target)
-        qtext = re.sub("[^\\.a-z0-9]+", " ", " ".join(wordList))
+        qtext = re.sub("[^\\.a-z0-9]+", " ", " ".join(x for x in wordList if x not in wordsToRemove))
 
         session.query = textParser.parse(qtext) & (targetParser.parse(target) | headlineParser.parse(target))
         

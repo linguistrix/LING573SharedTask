@@ -53,31 +53,31 @@ class AnswerProcessingTaskExecutor(TaskExecutor):
             #    elif "PERSON" in ne_types:
             #        mediumAnswers.append((passage, docId))
             if answerType[:3] == "HUM":
-                print ("Answer is of HUM type!")
+                #print ("Answer is of HUM type!")
                 if "PERSON" in ne_types:
                     goodAnswers.append((passage, docId))
                 elif "ORGANIZATION" in ne_types or "GSP" in ne_types:
                     mediumAnswers.append((passage, docId))
             elif answerType[:3] == "LOC":
-                print ("Answer is of LOC type!")
+                #print ("Answer is of LOC type!")
                 if "GPE" in ne_types or "LOCATION" in ne_types:
                     goodAnswers.append((passage, docId))
                 elif "ORGANIZATION" in ne_types or "GSP" in ne_types or "PERSON" in ne_types:
                     mediumAnswers.append((passage, docId))
             elif answerType == "NUM:date":
-                print ("When Question Found!")
+                #print ("When Question Found!")
                 monthmatch = re.findall(monthRegex, passage.lower())
                 daymatch = list(daySet.intersection(passage.lower().split()))
                 yearmatch = re.findall(yearRegex, passage.lower())
                 if monthmatch or daymatch or yearmatch:
-                    print ("Found a time match") 
+                    #print ("Found a time match") 
                     #goodAnswers.append((' '.join(monthmatch + daymatch + yearmatch), docId))
                     goodAnswers.append((passage, docId))
                 else:    
                     badAnswers.append((passage, docId))
             elif answerType[:3] == "NUM":
                 nummatch = re.findall(numberRegex, passage.lower())
-                print ("Found a number match")
+                #print ("Found a number match")
                 #goodAnswers.append((' '.join(nummatch), docId))
                 if nummatch:
                     goodAnswers.append((passage, docId))
@@ -99,18 +99,3 @@ class AnswerProcessingTaskExecutor(TaskExecutor):
         
         self.LogTaskCompletion(session)
         return True
-'''
-    def CheckIfPassageContainsTopBigramsFromWeb(self, passage, topBigrams):
-        passageBigrams = Set()
-        tokens = word_tokenize(passage.lower())
-        for i in range(0, len(tokens) - 1):
-            bigram = "_".join(tokens[i:i+2])
-            passageBigrams.add(bigram)
-     
-        for eachTopBigram in topBigrams:
-            if eachTopBigram.lower() in passageBigrams:
-                return True
-        
-        return False
-
-'''
