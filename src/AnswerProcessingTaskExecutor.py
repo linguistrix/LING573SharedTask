@@ -5,6 +5,7 @@
 # Comes up with an answer given the relevant passages and query 
 
 from TaskExecutor import *
+from nltk.tree import Tree
 import pickle, os, sys, nltk
 import re
 
@@ -36,14 +37,15 @@ class AnswerProcessingTaskExecutor(TaskExecutor):
         
         for score, passage, docId in session.relevantPassages:
             passage = passage.replace("\n", " ")
+            passageTruncated = passage[:250]
 
             ne_tree = nltk.ne_chunk(nltk.pos_tag(nltk.word_tokenize(passage)))
             ne_types = []
             for item in ne_tree:
-                try:
+                if type(item) == Tree and passageTruncated.find(item.leaves()[0][0]) != -1:
                     ne_types.append(str(item.node))
-                except AttributeError:
-                    pass
+
+            passage = passageTruncated
 
             #if answerType == "HUM:gr":
             #    if "ORGANIZATION" in ne_types or "GSP" in ne_types:
@@ -60,7 +62,7 @@ class AnswerProcessingTaskExecutor(TaskExecutor):
                 print ("Answer is of LOC type!")
                 if "GPE" in ne_types or "LOCATION" in ne_types:
                     goodAnswers.append((passage, docId))
-                elif "ORGANIZATION" in ne_types or "GSP" in ne_types:
+                elif "ORGANIZATION" in ne_types or "GSP" in ne_types or "PERSON" in ne_types:
                     mediumAnswers.append((passage, docId))
             elif answerType == "NUM:date":
                 print ("When Question Found!")
@@ -90,7 +92,7 @@ class AnswerProcessingTaskExecutor(TaskExecutor):
             len(badAnswers)))
 
         allAnswers = goodAnswers + mediumAnswers + badAnswers
-        session.answers = [(x[:250], y) for x, y in allAnswers[:20]]
+        session.answers = allAnswers[:20]
 
         for passage, docId in session.answers:
             session.logs.append("Answer: {0} | {1}".format(passage, docId))

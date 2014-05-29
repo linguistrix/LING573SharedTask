@@ -16,13 +16,13 @@ onlyResultFiles = [ f for f in onlyFiles if f.endswith(".result")]
 
 onlyResultFiles.sort()
 
-output = ""
+output = []
 for eachFile in onlyResultFiles:
     file = open(join(inputDir, eachFile), "r") 
-    output += file.read()
+    output += file.readlines()[:20]
     file.close()
     
 outputFile = open(outputResultFilename, "w")
-outputFile.write(output)
+outputFile.write("".join(output))
 outputFile.close()
 

@@ -60,10 +60,10 @@ class PassageTriple(object):
         self.docId = docId
 
     def __eq__(self, other):
-        return self.text.lower() == other.text.lower()
+        return self.text[:250].lower() == other.text[:250].lower()
 
     def __hash__(self):
-        return hash(self.text.lower())
+        return hash(self.text[:250].lower())
 
 def removeNewline(s):
   return re.sub(r"\s+", " ", s.strip())
