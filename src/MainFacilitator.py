@@ -29,10 +29,14 @@ class Question(object):
 class MainFacilitator(object):
     def __init__(self):
         self.SetMode(None)
+        self.SetDataSetType(None)
         self.InitializeTaskExecutors()
 
     def SetMode(self, mode):
         self.mode = mode
+
+    def SetDataSetType(self, type):
+        self.dataSetType = type
 
     def InitializeTaskExecutors(self):
         self.taskExecutors = []
@@ -43,7 +47,8 @@ class MainFacilitator(object):
         self.taskExecutors.append(AnswerProcessingTaskExecutor())
 
     def AnswerQuestion(self, question):
-        session = Session(question, self.mode)
+
+        session = Session(question, self.mode, self.dataSetType)
         
         for taskExecutor in self.taskExecutors:
             if (False == taskExecutor.Execute(session)):

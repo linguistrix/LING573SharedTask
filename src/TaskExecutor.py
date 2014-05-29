@@ -17,10 +17,17 @@ class TaskExecutor(object):
 
 
 class Session(object):
-    def __init__(self, question, mode):
-        
-        self.corpusPath = "/corpora/LDC/LDC02T31"
-        self.indexPath = "/home2/abothale/ling573/LING573SharedTask/src/index"
+    def __init__(self, question, mode, datasettype):
+
+        self.dataSetType = datasettype
+
+        if self.dataSetType == 'devtest':
+            self.corpusPath = "/corpora/LDC/LDC02T31"
+            self.indexPath = "/home2/abothale/ling573/LING573SharedTask/src/devtestindex"
+        elif self.dataSetType == 'evaltest':
+            self.corpusPath = "/corpora/LDC/LDC08T25/"
+            self.indexPath = "/home2/abothale/ling573/LING573SharedTask/src/evaltestindex"
+
         self.index = whoosh.index.open_dir(self.indexPath)
 
         self.question = question

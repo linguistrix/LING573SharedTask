@@ -4,6 +4,8 @@
 import sys
 from MainFacilitator import *
 
+permitted_dataset_types = ['devtest', 'evaltest']
+
 if __name__ == '__main__':
     if (len(sys.argv) < 4):
         print("Usage: ./AnswerQuestionForParallelProcessing.py run_tag question_id question_dir")
@@ -12,6 +14,13 @@ if __name__ == '__main__':
     runTag = sys.argv[1]
     questionId = sys.argv[2]
     questionDir = sys.argv[3]
+    if len(sys.argv) > 4:
+        dataSetType = sys.argv[4]
+        if dataSetType not in permitted_dataset_types:
+            print ("Currently permitted Data Set Types: 'devtest' (default), 'evaltest' (Enter without quotes)")
+            sys.exit(1)
+    else:
+        dataSetType = 'devtest'
 
     questionType, questionText, questionTarget = open(os.path.join(questionDir, questionId + ".question")).read().split("\n")
     
@@ -24,7 +33,7 @@ if __name__ == '__main__':
 
     mainFacilitator = MainFacilitator()
     mainFacilitator.SetMode("TREC")
-
+    mainFacilitator.SetDataSetType(dataSetType)
     question = Question(
         questionId, questionType, questionText, questionTarget)
     session = mainFacilitator.AnswerQuestion(question)

@@ -31,7 +31,8 @@ class PassageRetrievalTaskExecutor(TaskExecutor):
             id = result[0]
 
             doc = Document()
-            doc.loadDocumentFromID(id, corpusPath)
+            doc.loadDocumentFromID(id, corpusPath, session.dataSetType)
+
             body = doc.body
 
             tokens = self.analyzer(body, positions=True, chars=True, removestops=False)

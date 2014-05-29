@@ -13,12 +13,12 @@ class Document:
         self.docid = ''
         self.headline = ''
 
-    def loadDocumentFromID(self, docid, folderpath, datatype = 'aquaint'):
+    def loadDocumentFromID(self, docid, folderpath, datatype):
         # Takes the Document Number / Doc ID and the path to the LDC02T31 folder
         # and populates the object with the document
         # Returns True if successful and False if not
         #print folderpath
-        if datatype == 'aquaint':
+        if datatype == 'devtest':
             filepath = self.getFilePath(docid, folderpath, datatype)
 
             if os.path.exists(filepath):
@@ -47,7 +47,7 @@ class Document:
                 self.headline = headline
 
                 return True
-        elif datatype == 'aquaint2':
+        elif datatype == 'evaltest':
             filepath = self.getFilePath(docid, folderpath, datatype)
 
             if os.path.exists(filepath):
@@ -79,8 +79,8 @@ class Document:
         return False
 
 
-    def getFilePath(self, docid, folderpath, datatype = 'aquaint'):
-        if datatype == 'aquaint':
+    def getFilePath(self, docid, folderpath, datatype):
+        if datatype == 'devtest':
             matcher = re.match(r"(XIE|APW|NYT)(\d{4})(\d{4})\.(\d{4})", docid)
             suffix_dict = {'NYT':'NYT', 'APW':'APW_ENG', 'XIE':'XIN_ENG'}
             if matcher is not None:
@@ -89,7 +89,7 @@ class Document:
                 mmdd = matcher.group(3)
                 id = matcher.group(4)
                 return os.path.join(folderpath, source.lower(), year, year + mmdd + "_" + suffix_dict[source])
-        elif datatype == 'aquaint2':
+        elif datatype == 'evaltest':
             dirname = docid[:7].lower()
             filename = docid[:14].lower()
             return os.path.join(folderpath, 'data', dirname, filename + '.xml')
