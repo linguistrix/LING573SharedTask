@@ -29,7 +29,7 @@ class Question(object):
 class MainFacilitator(object):
     def __init__(self):
         self.SetMode(None)
-        self.SetDataSetType(None)
+        self.SetDataSetType('devtest')
         self.InitializeTaskExecutors()
 
     def SetMode(self, mode):
