@@ -29,13 +29,14 @@ def GetAllQuestions(questionsFilename):
 
 if __name__ == '__main__':
     if (len(sys.argv) < 4):
-        print("Usage: ./GenerateParallelEvaluationScript.py run_tag question_file output_dir condor_script_file")
+        print("Usage: ./GenerateParallelEvaluationScript.py run_tag data_set question_file output_dir condor_script_file")
         sys.exit(1)
 
     runTag = sys.argv[1]
-    questionsFilename = sys.argv[2]
-    outputDir = os.path.abspath(sys.argv[3])
-    condorScriptFilename = sys.argv[4]
+    dataSet = sys.argv[2]
+    questionsFilename = sys.argv[3]
+    outputDir = os.path.abspath(sys.argv[4])
+    condorScriptFilename = sys.argv[5]
 
     questions = GetAllQuestions(questionsFilename)
 
@@ -43,10 +44,11 @@ if __name__ == '__main__':
 
     for question in questions:
 
-        condorScriptOutput += "arguments = \"{0} {1} {2}\"\n".format( 
+        condorScriptOutput += "arguments = \"{0} {1} {2} {3}\"\n".format( 
                 runTag,
                 question.id,
-                outputDir)
+                outputDir,
+                dataSet)
        
         questionOutputFile = os.path.join(outputDir, "{0}.question".format(question.id))
         consoleOutputFile = os.path.join(outputDir, "{0}.consoleOutput".format(question.id))

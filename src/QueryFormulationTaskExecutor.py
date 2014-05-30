@@ -48,6 +48,8 @@ class QueryFormulationTaskExecutor(TaskExecutor):
             session.question,
             10)
 
+        session.logs.append("Top bigrams from web: " + ", ".join(session.topBigramsFromWeb))
+
         wordListFromWeb = set()
         for eachBigram in session.topBigramsFromWeb:
             words = eachBigram.lower().split("_")

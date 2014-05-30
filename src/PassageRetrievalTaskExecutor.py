@@ -6,6 +6,8 @@
 
 from TaskExecutor import *
 from NewsDocument import *
+from sets import Set
+from nltk import word_tokenize
 import re
 import whoosh.analysis
 import whoosh.highlight
@@ -42,17 +44,52 @@ class PassageRetrievalTaskExecutor(TaskExecutor):
                 PassageTriple(self.scorer(f), removeNewline(self.formatter.format_fragment(f)), id)
                 for f in self.fragmenter.fragment_tokens(body, tokens) )
         
-        #triples.sort(reverse=True)
+        
+        relevantPassages = [] 
+        for triple in triples:
+            #bigramMatchesWithQuestion = self.GetBigramMatches(session.question.text, triple.text)
+            #bigramMatchesWithTargetText = self.GetBigramMatches(session.question.target, triple.text)
+            #webBigramMatches = self.GetMatchesWithBigramsFromWeb(triple.text, session.topBigramsFromWeb)
+            webBigramMatches = 0 
 
-        relevantPassages = [(triple.score, triple.text, triple.docId) for triple in triples]
+            relevantPassages.append(
+                    (triple.score,
+                    webBigramMatches,
+                    triple.text,
+                    triple.docId))
+
         relevantPassages.sort(reverse=True)
 
         session.relevantPassages = relevantPassages
 
-        for score, passage, docId in relevantPassages: 
-            session.logs.append("Relevant passage: {0} | score: {1}".format(passage, score)) 
+        for score, bigramMatches, passage, docId in session.relevantPassages: 
+            session.logs.append("Relevant passage: {0} | score: {1} | bigram macthes: {2}".format(passage, score, bigramMatches)) 
+
         self.LogTaskCompletion(session)
+        
         return True
+    
+    def GetBigrams(self, text):
+        bigrams = Set()
+        tokens = word_tokenize(text.lower())
+        for i in range(0, len(tokens) - 1):
+            bigram = "_".join(tokens[i:i+2])
+            bigrams.add(bigram) 
+        
+        return bigrams
+
+    def GetBigramMatches(self, text1, text2):
+        bigrams1 = self.GetBigrams(text1)
+        bigrams2 = self.GetBigrams(text2)
+
+        return len(bigrams1.intersection(bigrams2))
+
+    def GetMatchesWithBigramsFromWeb(self, text, bigramsFromWeb):
+        bigramsFromWeb = Set(bigramsFromWeb)
+
+        bigrams = self.GetBigrams(text)
+        
+        return len(bigrams.intersection(bigramsFromWeb))
 
 class PassageTriple(object):
     def __init__(self, score, text, docId):
