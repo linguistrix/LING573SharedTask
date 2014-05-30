@@ -47,14 +47,15 @@ class PassageRetrievalTaskExecutor(TaskExecutor):
         
         relevantPassages = [] 
         for triple in triples:
-            #bigramMatchesWithQuestion = self.GetBigramMatches(session.question.text, triple.text)
-            #bigramMatchesWithTargetText = self.GetBigramMatches(session.question.target, triple.text)
-            #webBigramMatches = self.GetMatchesWithBigramsFromWeb(triple.text, session.topBigramsFromWeb)
-            webBigramMatches = 0 
+            bigramMatchesWithQuestion = self.GetBigramMatches(session.question.text, triple.text)
+            bigramMatchesWithTargetText = self.GetBigramMatches(session.question.target, triple.text)
+            webBigramMatches = self.GetMatchesWithBigramsFromWeb(triple.text, session.topBigramsFromWeb)
 
+            bigramMatches = bigramMatchesWithQuestion + bigramMatchesWithTargetText + webBigramMatches
+            
             relevantPassages.append(
                     (triple.score,
-                    webBigramMatches,
+                    bigramMatches,
                     triple.text,
                     triple.docId))
 
