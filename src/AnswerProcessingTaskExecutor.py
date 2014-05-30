@@ -35,7 +35,7 @@ class AnswerProcessingTaskExecutor(TaskExecutor):
 
         answerType = session.answerType
         
-        for score, passage, docId in session.relevantPassages:
+        for score, bigramMatches, passage, docId in session.relevantPassages:
             passage = passage.replace("\n", " ")
             passageTruncated = passage[:250]
 
