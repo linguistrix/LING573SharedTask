@@ -37,15 +37,13 @@ class AnswerProcessingTaskExecutor(TaskExecutor):
         
         for score, bigramMatches, passage, docId in session.relevantPassages:
             passage = passage.replace("\n", " ")
-            passageTruncated = passage[:250]
 
             ne_tree = nltk.ne_chunk(nltk.pos_tag(nltk.word_tokenize(passage)))
             ne_types = []
             for item in ne_tree:
-                if type(item) == Tree and passageTruncated.find(item.leaves()[0][0]) != -1:
+                if type(item) == Tree and passage.find(item.leaves()[0][0]) != -1:
                     ne_types.append(str(item.node))
 
-            passage = passageTruncated
 
             #if answerType == "HUM:gr":
             #    if "ORGANIZATION" in ne_types or "GSP" in ne_types:
@@ -92,7 +90,7 @@ class AnswerProcessingTaskExecutor(TaskExecutor):
             len(badAnswers)))
 
         allAnswers = goodAnswers + mediumAnswers + badAnswers
-        session.answers = allAnswers[:20]
+        session.answers = map(lambda x: (x[0][:250], x[1]), allAnswers[:20])
 
         for passage, docId in session.answers:
             session.logs.append("Answer: {0} | {1}".format(passage, docId))
