@@ -7,13 +7,13 @@ import os, sys
 
 class WebSnippetRetrieval(object):
     def __init__(self):
-        self.cachedSnippetsPath = os.path.join(sys.path[0], "../CachedWebContent/DevTestSnippets")
+        return
    
-    def GetTopSortedBigramsFromWeb(self, question, n):
-        snippets = self.GetWebSnippets(question)
+    def GetTopSortedBigramsFromWeb(self, session, n):
+        snippets = self.GetWebSnippets(session.question, session.cachedSnippetsPath)
         bigramCounts = self.GetBigramsCountsFromWebSnippets(snippets)
 
-        questionText = question.text + " " + question.target
+        questionText = session.question.text + " " + session.question.target
         
         # Remove bigrams that contain words in the original question
         questionWords = set(word_tokenize(questionText.lower()))
@@ -28,10 +28,10 @@ class WebSnippetRetrieval(object):
         sortedBigramCounts = sorted(bigramCounts.iteritems(), key=lambda x: x[1], reverse=True)
         return map(lambda x: x[0], sortedBigramCounts[:n])
     
-    def GetWebSnippets(self, question):
+    def GetWebSnippets(self, question, cachedSnippetsPath):
         try:
             filename = os.path.join(
-                self.cachedSnippetsPath,
+                cachedSnippetsPath,
                 "{0}.snippets".format(question.id))
 
             snippetFile = open(filename, "r")

@@ -9,12 +9,13 @@ from MainFacilitator import *
 
 mainFacilitator = MainFacilitator()
 mainFacilitator.SetMode("TREC")
+mainFacilitator.SetDataSetType("evaltest")
 
 question = Question(
-    "178.4",
+    "216.2",
     "FACTOID",
-    "In what Texas town did the FBI and ATF destroy a compound killing dozens, but found no methamphetamine lab?",
-    "methamphetamine labs")
+    "At which university does Krugman teach?",
+    "Paul Krugman")
 
 session = mainFacilitator.AnswerQuestion(question)
 print("\n".join(session.logs))

@@ -45,7 +45,7 @@ class QueryFormulationTaskExecutor(TaskExecutor):
 
         # Add words from top bigrams to the word list
         session.topBigramsFromWeb = self.webSnippetRetrieval.GetTopSortedBigramsFromWeb(
-            session.question,
+            session,
             10)
 
         wordListFromWeb = set()
