@@ -15,17 +15,33 @@ Strict Score: 0.2433
 D3 report can be found at doc/reports/D3.pdf
 
 
+D4
+======================
+DevTest (TREC 2006)
+Lenient Score: 0.390364270146
+Strict Score: 0.268501844668
+
+EvalTest (TREC 2007)
+Lenient Score: 0.399355176883
+Strict Score: 0.249033038596
+
+
 Execute the following commands to reproduce the results:
 
-./GenerateParallelDevTestRunCondorScript.sh 
+# Dev Test
+    ./GenerateParallelDevTestRunCondorScript.sh 
 
-condor_submit parallel_run_all.cmd
+    condor_submit parallel_run_all.cmd
 
 # Wait for all Condor jobs to finish
 
-python2.7 src/AgregateParallelRunResults.py ./parallel_run_output/ ./outputs/D3.outputs 
+    ./AgregateDevTestResultsAndEvaluate.sh
 
-python2.6 /dropbox/13-14/573/code/compute_mrr.py /dropbox/13-14/573/Data/patterns/devtest/factoid-docs.litkowski.2006.txt outputs/D3.outputs strict > results/D3.results_strict
+# Eval Test
+    ./GenerateParallelEvalTestRunCondorScript.sh 
 
-python2.6 /dropbox/13-14/573/code/compute_mrr.py /dropbox/13-14/573/Data/patterns/devtest/factoid-docs.litkowski.2006.txt outputs/D3.outputs lenient > results/D3.results_lenient
+    condor_submit parallel_run_all.cmd
 
+# Wait for all Condor jobs to finish
+
+    ./AgregateEvalTestResultsAndEvaluate.sh
