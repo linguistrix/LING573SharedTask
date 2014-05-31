@@ -22,8 +22,8 @@ Lenient Score: 0.390364270146
 Strict Score: 0.268501844668
 
 EvalTest (TREC 2007)
-Lenient Score: 0.404515369332
-Strict Score: 0.256814835343
+Lenient Score: 0.411842955539
+Strict Score: 0.263306475887
 
 
 Execute the following commands to reproduce the results:

@@ -63,8 +63,8 @@ class PassageRetrievalTaskExecutor(TaskExecutor):
 
         session.relevantPassages = relevantPassages
 
-        for score, bigramMatches, passage, docId in session.relevantPassages: 
-            session.logs.append("Relevant passage: {0} | score: {1} | bigram macthes: {2}".format(passage, score, bigramMatches)) 
+        #for score, bigramMatches, passage, docId in session.relevantPassages: 
+            #session.logs.append("Relevant passage: {0} | score: {1} | bigram macthes: {2}".format(passage, score, bigramMatches)) 
 
         self.LogTaskCompletion(session)
         
