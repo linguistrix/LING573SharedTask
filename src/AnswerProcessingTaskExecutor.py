@@ -8,6 +8,7 @@ from TaskExecutor import *
 from nltk.tree import Tree
 import pickle, os, sys, nltk
 import re
+import unicodedata
 
 class AnswerProcessingTaskExecutor(TaskExecutor):
     def __init__(self):
@@ -93,7 +94,10 @@ class AnswerProcessingTaskExecutor(TaskExecutor):
         session.answers = map(lambda x: (x[0][:250], x[1]), allAnswers[:20])
 
         for passage, docId in session.answers:
-            session.logs.append("Answer: {0} | {1}".format(passage, docId))
+            session.logs.append("Answer: {0} | {1}".format(
+                unicodedata.normalize('NFKD', passage).encode("utf-8", "ignore"),
+                docId))
+                
         
         self.LogTaskCompletion(session)
         return True

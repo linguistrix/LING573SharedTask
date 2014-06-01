@@ -2,6 +2,7 @@
 # Used by condor script to answer a question 
 
 import sys
+import unicodedata
 from MainFacilitator import *
 
 permitted_dataset_types = ['devtest', 'evaltest']
@@ -47,8 +48,8 @@ if __name__ == '__main__':
             resultFile.write("{0} {1} {2} {3}\n".format(
                 question.id,
                 runTag,
-                ans[1],
-                ans[0]))
+                unicodedata.normalize('NFKD', ans[1]).encode("utf-8", "ignore"),
+                unicodedata.normalize('NFKD', ans[0]).encode("utf-8", "ignore")))
 
     resultFile.close()
 
