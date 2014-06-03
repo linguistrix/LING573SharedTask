@@ -36,7 +36,7 @@ def WriteStats(questionsFile, factoidsFile, resutlsFile):
 
     for q in questions:
 	
-    	features = questionFeatureFactory.GetAllFeatures(q)
+        features = questionFeatureFactory.GetAllFeatures(q)
         q.type = classifier.classify(features)
         classDict[q.id] = q.type
 
