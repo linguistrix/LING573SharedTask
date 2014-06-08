@@ -54,12 +54,7 @@ This document reports the creation and performance of an end-to-end Question Ans
 
 \section{System Overview}
 
-Our system architecture can be broken down into three major classes - MainFacilitator, TaskExecutor, and Session. Our information retrieval system processes queries and retrieves answers in 5 steps, namely Question Classification, Query Formation, Document Retrieval, Passage Retrieval, and Answer Processing. Each of these steps are encapsulated in their own class and derives from the TaskExecutor task. The Session object is used to pass information between these tasks. The implementation of each TaskExecutor is completely transparent to the MainFacilitator, whose job is to simply run the TaskExecutor(s) in the correct order and pass a Session object between them. The QuestionProcessor object is embedded in the Session object and contains methods that allows the TaskExecutor(s) to access the user query.
-
-During start-up, MainFacilitator instantiates the five TaskExecutor(s) and put them in an array. When there is a new query and the AnswerQuestion() method is called, MainFacilitator creates a new Session object and calls Execute() on each of the TaskExecutor(s) sequentially. Barring any execution error, the answer will be written to the Session object.
-
-The SystemEvaluator reads in all the question from the data set and calls MainFacilitator's AnswerQuestion() function. It then reads the answer from the returned Session object and
-writes to the output file.
+Our system architecture can be broken down into three major classes - MainFacilitator, TaskExecutor, and Session. Each question and answering session is represented by a Session object. For each session, the MainFacilitator runs the TaskExecutor(s) in sequence to produce the answers. We were able to cut down our evaluation time dramatically by running the sessions in parallel on the Condor computing cluster. 
 
 %\begin{figure*}
 \includegraphics[width=3in,height=1.75in]{MIM_class_diagram.png}
@@ -90,6 +85,8 @@ The Beautiful Soup XML parser \cite{bsoup} was used to parse all the documents a
 
 \subsection{Passage Retrieval}
 This step reads the files retrieved in the last step, extracting all passages in the documents that contain the keywords (the target words, the words in the question, and the words added from web-boosting). A ``passage'' in our current system is simply defined as a sentence, where sentence segmentation is handled by Whoosh. These passages are then scored based on the density of keywords in the passage. The passage extraction and scoring function are taken from Whoosh, which are originally used for returning snippets for search results.
+
+Additionally, we re-ranked the retrieved passages based on a bigram-match score, which is obtained by counting the number of bigram matches the target passage has with the original question, target words and  top-10 web bigrams. Passages with higher match number are ranked higher.
 
 \subsection{Answer Processing}
 We do re-ranking based on pattern matching, and then chop off anything after 250 characters. If the question is classified to be of type \emph{HUM}, any answer with named entities of type \emph{PERSON} (as classified by NLTK) are bumped above answers without such entities. Likewise, for questions of type \emph{NUM:date}, answers that have a pattern match with a date / year pattern are bumped up. Finally, for questions of type \emph{NUM}, we prioritize answers with numerical patterns in them. If there are multiple answers that satisfy any of the above criteria, we do not break ties between them and return them in the relative order in which they were returned by the passage retrieval system.
