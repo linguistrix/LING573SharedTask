@@ -46,27 +46,40 @@
 \begin{document}
 \maketitle
 \begin{abstract}
-We detail all the work done on MIM, our Question Answering system. We describe the architecture and design choices of our system, and report a Lenient/Strict MRR scores of 0.390/0.269 and 0.416/0.267 on the development and evaluation data sets, respectively.
+We detail all the work done on MIM, our Question Answering system. We describe the architecture and design choices of our system, along with a detailed description of the various NLP and information retrieval techniques used to improve MRR scores, such as query reformulation, question classification, web-boosting, answer re-ranking, and so on. We report Lenient/Strict MRR scores of 0.390/0.269 and 0.416/0.267 on the development and evaluation data sets, respectively.
+
+
 \end{abstract}
 
 \section{Introduction}
-This document reports the creation and performance of an end-to-end Question Answering system called MIM that answers questions based on documents from the AQUAINT (1 or 2) corpus. We have the complete system in place for the overall task. The techniques that our system utilizes include question classification, web-boosting, and answer reranking, and so on.
+This document reports the creation and performance of an end-to-end Question Answering system called MIM that answers questions based on documents from the AQUAINT (1 or 2) corpus. We have the complete system in place for the overall task. The techniques that our system utilizes include question classification, web-boosting, answer re-ranking, and so on.
 
 In Section 2, we present the overall architecture of MIM. In Section 3, we document the approaches and design choices in building the system. Section 4 reports final results (MRR scores) on the development and evaluation (TREC 2006 and 2007) data, together with error analysis.
 
 \section{System Overview}
 
-Our system architecture can be broken down into three major classes---MainFacilitator, TaskExecutor, and Session. Each question and answering session is represented by a Session object. For each session, the MainFacilitator runs the TaskExecutor(s) in sequence to produce the answers. The schematic diagram of our system is shown in Fig 1. We were able to cut down our evaluation time dramatically by running the sessions in parallel on the Condor computing cluster. 
+Our system architecture can be broken down into three major classes---MainFacilitator, TaskExecutor, and Session. Each question and answering session is represented by a Session object. For each session, the MainFacilitator runs the TaskExecutor(s) in sequence to produce the answers. 
 
-%\begin{figure*}
+The three key tasks in the pipeline, viz. Document Retrieval, Passage Retrieval and Answer Processing, are each handled by a TaskExecutor. MainFacilitator creates a new Session object runs each of the TaskExecutor(s) sequentially. Barring any execution error, the answer will be written to the Session object. 
+
+The SystemEvaluator reads in all the question from the data set and invokes MainFacilitator. It then reads the answer from the returned Session object and writes to the output file.
+
+The schematic diagram of our system is shown in Figure \ref{classdiagram}.
+
+We were also able to cut down our evaluation time dramatically by running the sessions in parallel on the Condor computing cluster. 
+
+
+
+\begin{figure}[h]
 \includegraphics[width=3in,height=1.75in]{MIM_class_diagram.png}
-Fig 1: class diagram of the MIM QA system
-%\end{figure*}
+
+\caption{\label{classdiagram}Class diagram of the MIM QA system}
+\end{figure}
 
 
 \section{Approach}
 \subsection{Question Classification}
-We build an SVM classifier that classifies a given question into one of the question types defined in the UIUC question taxonomy \cite{uiuc}. The classifier uses unigrams as well as the {\it Wh-} words and the headwords as features. (Headwords are extracted from parsing the questions using the Berkeley parser \cite{berkeleyparser}).
+We build an SVM classifier that classifies a given question into one of the question types defined in the UIUC question taxonomy \cite{li2002learning}. The classifier uses unigrams as well as the {\it Wh-} words and the headwords as features. (Headwords are extracted from parsing the questions using the Berkeley parser \cite{berkeleyparser}).
 
 We train the classifier on the dataset from \cite{uiuc} with 5500 labeled questions, and test the classifier on TREC 2004 and 2005 question-answering data. Since the test data are only labeled for coarse-grained question types (6 classes), we can only evaluate the classifier with coarse-grained classification, for which our SVM classifier achieves 87\% accuracy. However, for our end-to-end system we retrained the classifier for fine-grained question classification (50 classes) because coarse-grained class label does not provide sufficient information for selecting correct answers.
 
@@ -77,21 +90,24 @@ In this step we convert the question into a query that can be used for document 
 We first expand our query with verb conjugation. To achieve this, we use a dictionary of conjugations of over 8,000 verbs from NodeBox Linguistics \cite{nodebox}. (According to the documentation, the dictionary is converted from the tree adjoint grammar developed by UPenn.) For each verb in the question in the infinitive form, we add its past tense or 3rd person singular present tense to the query​ depending on the auxiliaries in the question. If there is no auxiliary in the question, we do not add any verb conjugations.
 
 \subsubsection{Redundancy-Based Web-Boosting}
-We implemented another query expansion strategy using a redundancy-based web-boosting. The original question (together with the target words) is passed to the Ask.com search engine and the snippets of the first 40 results are extracted. From these snippets we obtain bigram counts and keep only the top 10 most frequent ones that do not contain any words from the original question. Often times, we found these top bigrams to  contain the correct answer to the questions.
+We implemented another query expansion strategy using redundancy-based web-boosting. The original question (together with the target words) is passed to the Ask.com search engine and the snippets of the first 40 results are extracted. From these snippets we obtain bigram counts and keep only the top 10 most frequent ones that do not contain any words from the original question. Often times, we found these top bigrams to  contain the correct answer to the questions.
 
 We then harvest unique terms from these top bigrams and add them to the query. We were able to increase our accuracy significantly (at least 10 points).
 
 \subsection{Document Retrieval}
-The Document Retrieval system takes a document retrieval query from the Query Formation step and returns a list of hits from the indexing and retrieval engine, as described below. This list of documents is then used for Passage Retrieval and Answer Processing.
+The Document Retrieval system takes a document retrieval query from the Query Formation step and returns a list of documents from the indexing and retrieval engine, as described below. This list of documents is then used for Passage Retrieval and Answer Processing.
 
 \subsubsection{Indexing and Retrieval Engine}
 For our indexing and retrieval engine, we use Whoosh \cite{whoosh}, which is pure-Python based text indexing, search, and spell checking library. The choice of a Python based library above alternatives such as Lucene and Indri/Lemur was motivated by its ease of integration and use with our Python code-base, and its functionality being comparable to that of its Java counterparts.
 
 \subsubsection{Indexing Strategy}
-The Beautiful Soup XML parser \cite{bsoup} was used to parse all the documents and extract the Document ID, Headline and Body Text. Whoosh's in-built indexing engine was used to index all the documents present in the corpus. The current system uses Whoosh's default indexing mechanism, which does not process the text, we plan to improve on this by incorporating tokenization and stemming. The indexing schema was designed to store the Document ID and Headline with the Index, while the Body Text was indexed but not stored as it would have caused unnecessary duplication of data. Instead, the text is retrieved from the document using the Document ID whenever needed.
+The Beautiful Soup XML parser \cite{bsoup} was used to parse all the documents and extract the Document ID, Headline and Body Text. Whoosh's in-built indexing engine was used to index all the documents present in the corpus. The current system uses Whoosh's default indexing mechanism, which does not process the text. The indexing schema was designed to store the Document ID and Headline with the Index, while the Body Text was indexed but not stored as it would have caused unnecessary duplication of data. Instead, the text is retrieved from the document using the Document ID whenever needed.
+
+\subsubsection{Retrieval Strategy}
+For each question, the documents are ranked by the Okapi BM25F scores against the query formulated in the Query Formation step above. The 100 documents with the highest BM25F scores are returned and passed down to the subsequent step (Passage Retrieval).
 
 \subsection{Passage Retrieval}
-This step reads the files retrieved in the last step, extracting all passages in the documents that contain the keywords (the target words, the words in the question, and the words added from web-boosting). A ``passage'' in our current system is simply defined as a sentence, where sentence segmentation is handled by Whoosh. These passages are then scored based on the density of keywords in the passage. The passage extraction and scoring function are taken from Whoosh, which are originally used for returning snippets for search results.
+This step reads the documents retrieved in the last step, extracting all passages in the documents that contain the keywords (the target words, the words in the question, and the words added from web-boosting). A ``passage'' in our current system is simply defined as a sentence, where sentence segmentation is handled by Whoosh. These passages are then scored based on the density of keywords in the passage. The passage extraction and scoring function are taken from Whoosh, which are originally used for returning snippets for search results.
 
 Since we noticed that some documents are repeated in the corpus, we filter out duplicate passages which helps to increase our recall.
 
@@ -112,7 +128,7 @@ If there are multiple answers that satisfy any of the above criteria, we do not 
 With top 20 answers for each question, the above-described system attains an MRR score of 0.269 under the strict evaluation scheme (0.390 under the lenient evaluation scheme) on the development (TREC 2006) data. On the final evaluation (TREC 2007) data, the system attains a strict score of 0.267 and a lenient score of 0.416.
 
 \subsection{Strategies that Are Most Helpful}
-We noticed three strategies that yield substantial performance gain of our system: First is to include the target words in our query; second is to use the whole sentence rather than automatically generated snippets as our answers; and third is to exploit search results from the World Wide Web.
+We noticed three strategies that yield the most substantial performance gain of our system: First is to include the target words in our query; second is to use the whole sentence rather than automatically generated snippets as our answers; and third is to exploit search results from the World Wide Web.
 
 \subsection{Error Analysis}
 The following statistics (Table \ref{stats}) were calculated to get a better understanding of system performance and of the sources of error. 
@@ -161,11 +177,15 @@ However, since a sizable number of questions remain unanswered (no viable candid
 \noindent \textbf{Analysis}:
 This is a surprisingly egregious failure of a system that otherwise performs reasonably well, particularly since almost all the cached web snippets contain the exact answer string. The source of error, in this case, turns out to be the fact that the system uses top bigrams from the web cache for query expansion. Since the year of birth occurs with a wide range of neighboring words, it does not rise to the top as part of any bigram, and is therefore missing from the reformulated query. An obvious solution is to score unigrams too, but that tends to promote a lot of spurious terms as well.
 
-\subsection{Summary}
-We have achieved fairly good results by improving key processes in the QA pipeline. We also realized (from our experience and also from that of other teams') that techniques like n-gram scoring only gave marginal improvement (if any) and we dropped them in favor of our current system. It is encouraging to see that the results are pretty good with the improvements we made.
+\section{Conclusion}
+We have achieved fairly good results by improving key processes in the QA pipeline. We also realized (from our experience and also from that of other teams') that techniques like n-gram scoring only gave marginal improvement (if any) and we dropped them in favor of our current system. 
+
+In the future, there are two components that we would like to improve on. The first is the document indexing and retrieval strategies, where we expect the recall of document retrieval will be further improved with more fuzzy matching techniques like stemming/lemmatization. The second is answer scoring and re-ranking, where we would like to incorporate more deep, linguistically motivated techniques such as Minimal Recursive Semantics (MRS) or other semantic representations.
+
+
 
 \section*{Acknowledgments}
-We thank C J Hsu for the code snippet for interfacing with Ask.com for the Web Boosting mode that he shared with all students on GoPost.
+We thank C.-J. Hsu for the code snippet for interfacing with Ask.com for the Web Boosting mode that he shared with all students on GoPost.
 
 \printbibliography
 
