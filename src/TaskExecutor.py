@@ -18,9 +18,9 @@ class TaskExecutor(object):
 
 
 class Session(object):
-    def __init__(self, question, mode, datasettype):
+    def __init__(self, question, mode, dataSetType):
 
-        self.dataSetType = datasettype
+        self.dataSetType = dataSetType
 
         if dataSetType == 'devtest':
             self.corpusPath = "/corpora/LDC/LDC02T31"
