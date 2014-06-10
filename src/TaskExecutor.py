@@ -22,11 +22,11 @@ class Session(object):
 
         self.dataSetType = datasettype
 
-        if self.dataSetType == 'devtest':
+        if dataSetType == 'devtest':
             self.corpusPath = "/corpora/LDC/LDC02T31"
             self.indexPath = "/home2/abothale/ling573/LING573SharedTask/src/devtestindex"
             self.cachedSnippetsPath = os.path.join(sys.path[0], "../CachedWebContent/DevTestSnippets")
-        elif self.dataSetType == 'evaltest':
+        elif dataSetType == 'evaltest':
             self.corpusPath = "/corpora/LDC/LDC08T25/"
             self.indexPath = "/home2/abothale/ling573/LING573SharedTask/src/evaltestindex"
             self.cachedSnippetsPath = os.path.join(sys.path[0], "../CachedWebContent/EvalTestSnippets")

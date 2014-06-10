@@ -46,15 +46,17 @@
 \begin{document}
 \maketitle
 \begin{abstract}
-We detail all the work done on MIM, our Question Answering system. We report a final lenient MRR score of 0.390 (strict score 0.269) on the DevTest Data and a final lenient MRR score of 0.416 (strict score 0.267) on the EvalTest Data, and detail the improvements made in the system to achieve said score.
+We detail all the work done on MIM, our Question Answering system. We describe the architecture and design choices of our system, and report a Lenient/Strict MRR scores of 0.390/0.269 and 0.416/0.267 on the development and evaluation data sets, respectively.
 \end{abstract}
 
 \section{Introduction}
-This document reports the creation and performance of an end-to-end Question Answering system that answers questions using documents from the AQUAINT(1/2) corpus. We have the complete system in place for the overall task, utilizing Query Processing, Question Classification, Web-Boosting and Answer Processing and present final results on the Development and Test Data Set. 
+This document reports the creation and performance of an end-to-end Question Answering system called MIM that answers questions based on documents from the AQUAINT (1 or 2) corpus. We have the complete system in place for the overall task. The techniques that our system utilizes include question classification, web-boosting, and answer reranking, and so on.
+
+In Section 2, we present the overall architecture of MIM. In Section 3, we document the approaches and design choices in building the system. Section 4 reports final results (MRR scores) on the development and evaluation (TREC 2006 and 2007) data, together with error analysis.
 
 \section{System Overview}
 
-Our system architecture can be broken down into three major classes - MainFacilitator, TaskExecutor, and Session. Each question and answering session is represented by a Session object. For each session, the MainFacilitator runs the TaskExecutor(s) in sequence to produce the answers. We were able to cut down our evaluation time dramatically by running the sessions in parallel on the Condor computing cluster. 
+Our system architecture can be broken down into three major classes---MainFacilitator, TaskExecutor, and Session. Each question and answering session is represented by a Session object. For each session, the MainFacilitator runs the TaskExecutor(s) in sequence to produce the answers. The schematic diagram of our system is shown in Fig 1. We were able to cut down our evaluation time dramatically by running the sessions in parallel on the Condor computing cluster. 
 
 %\begin{figure*}
 \includegraphics[width=3in,height=1.75in]{MIM_class_diagram.png}
@@ -68,37 +70,49 @@ We build an SVM classifier that classifies a given question into one of the ques
 
 We train the classifier on the dataset from \cite{uiuc} with 5500 labeled questions, and test the classifier on TREC 2004 and 2005 question-answering data. Since the test data are only labeled for coarse-grained question types (6 classes), we can only evaluate the classifier with coarse-grained classification, for which our SVM classifier achieves 87\% accuracy. However, for our end-to-end system we retrained the classifier for fine-grained question classification (50 classes) because coarse-grained class label does not provide sufficient information for selecting correct answers.
 
-\subsection{Query Formation by Redundancy-based Web-boosting}
-In this step we convert the question into a query that can be used for document retrieval. The query indicates that the subsequent module should search for the question terms (except the {\it Wh-} words) in the body text, and for the target words either in the title or the body text.
+\subsection{Query Formation}
+In this step we convert the question into a query that can be used for document retrieval. The query indicates that the subsequent module should search for the question terms in the body text, and for the target words either in the title or the body text. We also expand the query in two ways as described below in order to increase the recall of document retrieval.
 
-We implemented query expansion using a redundancy-based web-boosting strategy. The original question (together with the target words) is passed to the Ask.com search engine and the snippets of the first 40 results are extracted. From these snippets we obtain bigram counts and keep only the top 10 most frequent ones that do not contain any words from the original question. Often times, we found these top bigrams to  contain the correct answer to the questions.
+\subsubsection{Morphology-Based Query Expansion}
+We first expand our query with verb conjugation. To achieve this, we use a dictionary of conjugations of over 8,000 verbs from NodeBox Linguistics \cite{nodebox}. (According to the documentation, the dictionary is converted from the tree adjoint grammar developed by UPenn.) For each verb in the question in the infinitive form, we add its past tense or 3rd person singular present tense to the query​ depending on the auxiliaries in the question. If there is no auxiliary in the question, we do not add any verb conjugations.
 
-We then harvest unique terms from these top bigrams and add them to the query to the document retrieval system. We were able to increase our accuracy significantly (at least 10 points).
+\subsubsection{Redundancy-Based Web-Boosting}
+We implemented another query expansion strategy using a redundancy-based web-boosting. The original question (together with the target words) is passed to the Ask.com search engine and the snippets of the first 40 results are extracted. From these snippets we obtain bigram counts and keep only the top 10 most frequent ones that do not contain any words from the original question. Often times, we found these top bigrams to  contain the correct answer to the questions.
+
+We then harvest unique terms from these top bigrams and add them to the query. We were able to increase our accuracy significantly (at least 10 points).
 
 \subsection{Document Retrieval}
-The Document Retrieval Subsystem takes a document retrieval query from the session and populates the session with a list of hits from the indexing and retrieval system, as described below. This list of documents is then used for Passage Retrieval and Answer Processing.
+The Document Retrieval system takes a document retrieval query from the Query Formation step and returns a list of hits from the indexing and retrieval engine, as described below. This list of documents is then used for Passage Retrieval and Answer Processing.
 
-For the purpose of indexing and searching the documents, we use Whoosh \cite{whoosh}, which is pure-Python based text indexing, search, and spell checking library. The choice of a Python based library above alternatives such as Lucene and Indri/Lemur was motivated by its ease of integration and use with our Python code-base, and its functionality being comparable to that of its Java counterparts.
+\subsubsection{Indexing and Retrieval Engine}
+For our indexing and retrieval engine, we use Whoosh \cite{whoosh}, which is pure-Python based text indexing, search, and spell checking library. The choice of a Python based library above alternatives such as Lucene and Indri/Lemur was motivated by its ease of integration and use with our Python code-base, and its functionality being comparable to that of its Java counterparts.
 
-\subsubsection{Indexing}
-The Beautiful Soup XML parser \cite{bsoup} was used to parse all the documents and extract the Document ID, Headline and Body Text. Whoosh's in-built indexing engine was used to index all the documents present in the corpus. The current system uses Whoosh's default indexing mechanism, which does not process the text, we plan to improve on this by incorporating tokenization and stemming. The indexing schema was designed to store the Document ID and Headline with the Index, while the Body Text was indexed but not stored as it would have caused unnecessary duplication of data. Instead, the text is retrieved from the document using the Document ID whenever needed. This index is currently stored on Patas.
+\subsubsection{Indexing Strategy}
+The Beautiful Soup XML parser \cite{bsoup} was used to parse all the documents and extract the Document ID, Headline and Body Text. Whoosh's in-built indexing engine was used to index all the documents present in the corpus. The current system uses Whoosh's default indexing mechanism, which does not process the text, we plan to improve on this by incorporating tokenization and stemming. The indexing schema was designed to store the Document ID and Headline with the Index, while the Body Text was indexed but not stored as it would have caused unnecessary duplication of data. Instead, the text is retrieved from the document using the Document ID whenever needed.
 
 \subsection{Passage Retrieval}
 This step reads the files retrieved in the last step, extracting all passages in the documents that contain the keywords (the target words, the words in the question, and the words added from web-boosting). A ``passage'' in our current system is simply defined as a sentence, where sentence segmentation is handled by Whoosh. These passages are then scored based on the density of keywords in the passage. The passage extraction and scoring function are taken from Whoosh, which are originally used for returning snippets for search results.
 
+Since we noticed that some documents are repeated in the corpus, we filter out duplicate passages which helps to increase our recall.
+
 Additionally, we re-ranked the retrieved passages based on a bigram-match score, which is obtained by counting the number of bigram matches the target passage has with the original question, target words and  top-10 web bigrams. Passages with higher match number are ranked higher.
 
 \subsection{Answer Processing}
-We do re-ranking based on pattern matching, and then chop off anything after 250 characters. If the question is classified to be of type \emph{HUM}, any answer with named entities of type \emph{PERSON} (as classified by NLTK) are bumped above answers without such entities. Likewise, for questions of type \emph{NUM:date}, answers that have a pattern match with a date / year pattern are bumped up. Finally, for questions of type \emph{NUM}, we prioritize answers with numerical patterns in them. If there are multiple answers that satisfy any of the above criteria, we do not break ties between them and return them in the relative order in which they were returned by the passage retrieval system.
+We do re-ranking based on pattern matching and the question classification result from the previous subsystem, and then chop off anything after 250 characters. If the question is classified to be of type \emph{HUM}, any answer with named entities of type \emph{PERSON} (as classified by NLTK) in the first 250 characters are bumped above answers without such entities. Likewise, if the question is classified to be of type \emph{LOC}, any answer with named entities of type \emph{GPE} or \emph{LOCATION} in the first 250 characters are bumped above answers without such entities. 
 
-\section{Results}
+For questions of type \emph{NUM:date}, answers that have a pattern match with a date/year pattern are bumped up. 
 
-Under the baseline system, we obtain an aggregate score of 0.2433 under the Strict evaluation scheme, and an aggregate score of 0.3609 under the Lenient evaluation scheme.
+Finally, for questions of type \emph{NUM}, we prioritize answers with numerical patterns in them. 
 
-The big improvement from last deliverable comes from several sources: First, we include the target words in our query; second, we use the whole sentence rather than automatically generated snippets as our answers; third, we exploit search results from the World Wide Web and use question classification and relevant answer re-ranking.
+If there are multiple answers that satisfy any of the above criteria, we do not break ties between them and return them in the relative order in which they were returned by the passage retrieval system.
 
-\section{Discussion}
+\section{Results and Discussion}
 \label{sec:discussion}
+
+With top 20 answers for each question, the above-described system attains an MRR score of 0.269 under the strict evaluation scheme (0.390 under the lenient evaluation scheme) on the development (TREC 2006) data. On the final evaluation (TREC 2007) data, the system attains a strict score of 0.267 and a lenient score of 0.416.
+
+\subsection{Strategies that Are Most Helpful}
+We noticed three strategies that yield substantial performance gain of our system: First is to include the target words in our query; second is to use the whole sentence rather than automatically generated snippets as our answers; and third is to exploit search results from the World Wide Web.
 
 \subsection{Error Analysis}
 The following statistics (Table \ref{stats}) were calculated to get a better understanding of system performance and of the sources of error. 

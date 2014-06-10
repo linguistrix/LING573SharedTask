@@ -58,7 +58,7 @@ def main():
             qid = parts[0]
             patt = ''
             partct = 1
-            while partct < len(parts) and parts[partct].find('APW') < 0 and parts[partct].find('XIE') < 0 and parts[partct].find('NYT') < 0:
+            while partct < len(parts) and parts[partct].find('APW') < 0 and parts[partct].find('XIE') < 0 and parts[partct].find('NYT') < 0 and parts[partct].find('AFP') < 0 and parts[partct].find('XIN') < 0 and parts[partct].find('LTW') < 0 and parts[partct].find('CNA') < 0:
                 patt += parts[partct]+'\s*'
                 partct += 1
             doclist = []

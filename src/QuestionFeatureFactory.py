@@ -111,7 +111,7 @@ class QuestionFeatureFactory(object):
         if whWord == "how":
             head = wordList[wordList.index("how") + 1]
         
-        elif whWord == "rest" or whWord == "what" or whWord == " which" or whWord == "whose":
+        elif whWord == "rest" or whWord == "what":
             if target is not None:
                 focus = FindNode(target, "WHNP")
                 if focus is not None:
