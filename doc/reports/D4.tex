@@ -141,9 +141,9 @@ The following statistics (Table \ref{stats}) were calculated to get a better und
 \hline
 Questions & 403 & 307\\
 Questions with Gold Patterns & 386 & 290\\
-Answers---Non-Zero Score & 263 & 197\\
-Answers---Top-10 Position & 224 & 182\\
-Answers---1st Position & 117 & 91\\
+Answers with Non-Zero Score & 263 & 197\\
+Answers within Top 10 Candidates & 224 & 182\\
+Answers at Top 1 Position & 117 & 91\\
 \hline
 \end{tabular}
 \end{center}
@@ -152,7 +152,7 @@ Answers---1st Position & 117 & 91\\
 \end{table}
 It can thus be seen that roughly 30\% of answerable questions (defined as those the pattern is present and hence the answer for which can be verified) in both of the development and evaluation datasets are answered with a score of 1.0 (top answer correct).
 
-The small difference between answers that have non-zero score and answers that are in the top 10 indicates that the answer re-ranking works fairly well if the answer is present in the top 20 answer candidates. 
+The small difference between answers that have non-zero scores and answers that are in the top 10 candidates indicates that the answer re-ranking works fairly well if the answer is present in the top 20 answer candidates. 
 
 However, since a sizable number of questions remain unanswered (no viable candidate in the top 20 candidates), it is also necessary to analyze the cause behind this.  Here, we present three questions for which our system scores 0, and our analysis as to why they fell through. These questions are all from the evaluation set, but the analysis is general and applies equally well for the development set.
 
@@ -161,7 +161,7 @@ However, since a sizable number of questions remain unanswered (no viable candid
 
 \noindent \textbf{Answer}: Economics
 
-\noindent \textbf{Analysis}: A look at the candidate answers returned by the system reveals that while the term ``economist'' was present in almost all of them, ``economics'' wasn't. Even among answers obtained using Web Search, while over-specific answer terms such as ``Keynesian'' were present, ``Economics'' was very rare. This indicates the need for derivational morphology processing of some sort, although that comes with its own set of issues with over-generalization.
+\noindent \textbf{Analysis}: A look at the candidate answers returned by the system reveals that while the term ``economist'' was present in almost all of them, ``economics'' wasn't. Even among answers obtained using Web Search, while over-specific answer terms such as ``Keynesian'' were present, ``economics'' was very rare. This indicates the need for derivational morphology processing of some sort, although that comes with its own set of issues with over-generalization.
 
 \noindent \textbf{Question 2}: When was CAFTA signed? 
 
