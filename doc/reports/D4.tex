@@ -32,7 +32,7 @@
 % in the camera-ready version and ask you to change it back.
 
 
-\title{MIM QA System: Deliverable 3}
+\title{MIM QA System}
 
 \author{Antariksh Bothale \\
   {\tt abothale@uw.edu} \\\And
@@ -140,7 +140,7 @@ The following statistics (Table \ref{stats}) were calculated to get a better und
 & Dev & Eval\\
 \hline
 Questions & 403 & 307\\
-Questions with Patterns & 386 & 290\\
+Questions with Gold Patterns & 386 & 290\\
 Answers---Non-Zero Score & 263 & 197\\
 Answers---Top-10 Position & 224 & 182\\
 Answers---1st Position & 117 & 91\\
@@ -150,37 +150,36 @@ Answers---1st Position & 117 & 91\\
 \caption{\label{stats} System Statistics. 
 }
 \end{table}
-It can thus be seen that roughly 30\% of answerable questions (defined as those the pattern is present and hence the answer for which can be verified) in both DevTest and EvalTest sets are answered with a score of 1 (top answer correct).
+It can thus be seen that roughly 30\% of answerable questions (defined as those the pattern is present and hence the answer for which can be verified) in both of the development and evaluation datasets are answered with a score of 1.0 (top answer correct).
 
-The small difference between answers that have non-zero score and answers that are in the Top 10 indicates that the answer re-ranking works fairly well if the answer is present in the Top 20 answer candidates. 
+The small difference between answers that have non-zero score and answers that are in the top 10 indicates that the answer re-ranking works fairly well if the answer is present in the top 20 answer candidates. 
 
-However, since a sizable number of questions remain unanswered (no viable candidate in the Top 20), it is also necessary to analyze the cause behind this.  Here, we present three questions for which our system scores 0, and our analysis as to why they fell through. Note that they are all from the EvalTest set, but the analysis is general and applies equally well for the DevTest set.
+However, since a sizable number of questions remain unanswered (no viable candidate in the top 20 candidates), it is also necessary to analyze the cause behind this.  Here, we present three questions for which our system scores 0, and our analysis as to why they fell through. These questions are all from the evaluation set, but the analysis is general and applies equally well for the development set.
 
 
 \noindent \textbf{Question 1}: What is Krugman's Academic Specialty? 
 
 \noindent \textbf{Answer}: Economics
 
-\noindent \textbf{Analysis}: A look at the candidate answers returned by the system reveals that while the term `Economist' was present in almost all of them, `Economics' wasn't. Even among answers obtained using Web Search, while over-specific answer terms such as `Keynesian' were present, `Economics' was very rare. This indicates the need for morphological processing of some sort, although that comes with its own set of issues with over-generalization.
+\noindent \textbf{Analysis}: A look at the candidate answers returned by the system reveals that while the term ``economist'' was present in almost all of them, ``economics'' wasn't. Even among answers obtained using Web Search, while over-specific answer terms such as ``Keynesian'' were present, ``Economics'' was very rare. This indicates the need for derivational morphology processing of some sort, although that comes with its own set of issues with over-generalization.
 
 \noindent \textbf{Question 2}: When was CAFTA signed? 
 
 \noindent \textbf{Answer}: May 2004
 
-\noindent \textbf{Analysis}: The top answer returned by the system was relevant but wasn't complete---\emph{``Bush signed the CAFTA\ldots{}in May''}. On the other hand, web snippets contained too specific an answer---\emph{``\ldots{} the signing took place on May 28.''} For date-related answers, it might be useful to check if they contain the year too, and if not, to predict it using the document date.
+\noindent \textbf{Analysis}: The top answer returned by the system was relevant but wasn't complete---\emph{``Bush signed the CAFTA \ldots in May.''} On the other hand, web snippets contained too specific an answer---\emph{``\ldots the signing took place on May 28.''} For date-related answers, it might be useful to check if they contain the year too, and if not, to predict it using the document metadata.
 
-
-\noindent \textbf{Question 2}: When was Rush Limbaugh born?
+\noindent \textbf{Question 3}: When was Rush Limbaugh born?
 
 \noindent \textbf{Answer}: 1951
 
 \noindent \textbf{Analysis}:
-This is a surprisingly egregious failure of a system that otherwise performs reasonably well, particularly since almost all the cached web snippets contain the exact answer string. The source of error, in this case, turns out to be the fact that the system uses top bigrams from the web cache for query expansion. Since the year of birth occurs with a wide range of neighboring words, it does not rise to the top as part of any bigram, and is therefore missing from the reformulated query. An obvious solution is to score unigrams too, but that tends to promote a lot of spurious terms as well.
+This is a surprisingly egregious failure of a system that otherwise performs reasonably well, particularly since almost all the cached web snippets contain the exact answer string. The source of error, in this case, turns out to be the fact that the system uses top bigrams from the web cache for query expansion. Since the year of birth occurs with a wide range of neighboring words, it does not rise to the top as part of any bigram, and is therefore missing from the reformulated query. An obvious solution is to score unigrams too, but that tends to promote a lot of spurious terms.
 
 \section{Conclusion}
 We have achieved fairly good results by improving key processes in the QA pipeline. We also realized (from our experience and also from that of other teams') that techniques like n-gram scoring only gave marginal improvement (if any) and we dropped them in favor of our current system. 
 
-In the future, there are two components that we would like to improve on. The first is the document indexing and retrieval strategies, where we expect the recall of document retrieval will be further improved with more fuzzy matching techniques like stemming/lemmatization. The second is answer scoring and re-ranking, where we would like to incorporate more deep, linguistically motivated techniques such as Minimal Recursive Semantics (MRS) or other semantic representations.
+In the future, there are two components that we would like to improve on. The first is the document indexing and retrieval strategies, where we expect the recall of document retrieval will be further improved with more fuzzy matching techniques like spell checking and stemming/lemmatization. The second is answer scoring and re-ranking, where we would like to incorporate more deep, linguistically motivated techniques such as Minimal Recursive Semantics (MRS) or other semantic representations.
 
 
 
