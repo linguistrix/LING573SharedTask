@@ -10,13 +10,11 @@ D2 report can be found at doc/reports/D2.pdf
 D3
 Lenient Score: 0.3609
 Strict Score: 0.2433
-=======
 
 D3 report can be found at doc/reports/D3.pdf
 
 
 D4
-======================
 DevTest (TREC 2006)
 Lenient Score: 0.390364270146
 Strict Score: 0.268501844668
@@ -24,6 +22,8 @@ Strict Score: 0.268501844668
 EvalTest (TREC 2007)
 Lenient Score: 0.415578587723
 Strict Score: 0.26704210807
+
+D4 report can be found at doc/reports/D4.pdf
 
 
 Execute the following commands to reproduce the results:
